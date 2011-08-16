@@ -144,7 +144,7 @@ public class GameView extends View {
 
 		mCurrentLevel = new Level(levelId);
 		mState = State.RUNNING;
-
+		update();
 	}
 
 	@Override
@@ -204,20 +204,16 @@ public class GameView extends View {
 	public boolean onKeyDown(int keyCode, KeyEvent msg) {
 
 		if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
-			return onInputUp();
+			onInputUp();
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+			onInputDown();
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+			onInputLeft();
+		} else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+			onInputRight();
 		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
-			return onInputDown();
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
-			return onInputLeft();
-		}
-
-		if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
-			return onInputRight();
-		}
+		
+		update();
 
 		return super.onKeyDown(keyCode, msg);
 	}

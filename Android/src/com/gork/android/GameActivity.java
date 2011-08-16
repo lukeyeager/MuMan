@@ -35,14 +35,10 @@ import com.gork.android.views.GameView;
 public class GameActivity extends Activity {
 
 	public static final String LEVEL = "level";
-
+	
 	private GameView mGameView;
+	private GameView.State savedState = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see android.app.Activity#onCreate(android.os.Bundle)
-	 */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		try {
@@ -79,5 +75,23 @@ public class GameActivity extends Activity {
 			finish();
 		}
 	}
+	
+    @Override
+    protected void onPause() {
+        // Pause the game along with the activity
+        savedState = mGameView.mState;
+        mGameView.mState = GameView.State.PAUSED;
 
+        super.onPause();
+    }
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+        // Resume the game along with the activity
+		if (savedState != null) {
+			mGameView.mState = savedState;
+		}
+	}
 }
