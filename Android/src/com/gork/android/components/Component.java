@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+/*
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
 
@@ -17,15 +16,32 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
--->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
-</LinearLayout>
+*/
+
+package com.gork.android.components;
+
+import com.gork.android.utils.Coordinate;
+
+/**
+ * Abstract class from which all components are derived (except Player).
+ * @author Luke
+ *
+ */
+public abstract class Component {
+	
+	private Coordinate position;
+	
+	public int getX() { return position.x; }
+	public int getY() { return position.y; }
+	
+	/**
+	 * Each component should define what happens when it collides with a Player
+	 * @param player
+	 */
+	public abstract void onCollision(Player player);
+	
+	/**
+	 * Each component should define which 
+	 */
+	public abstract int getImage();
+}
