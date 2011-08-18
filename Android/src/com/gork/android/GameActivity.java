@@ -46,14 +46,16 @@ public class GameActivity extends Activity {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
 			
+			System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
+			
 			setContentView(R.layout.game);
 	
 			// Try loading levelId from savedInstanceState
-			Integer levelId = (savedInstanceState == null) ? null : savedInstanceState.getInt(LEVEL);
+			String levelId = (savedInstanceState == null) ? null : savedInstanceState.getString(LEVEL);
 			if (levelId == null) {
 				// Otherwise, try loading levelId from the Intent
 				Bundle extras = getIntent().getExtras();
-				levelId = (extras != null) ? extras.getInt(LEVEL) : null;
+				levelId = (extras != null) ? extras.getString(LEVEL) : null;
 			}
 			if (levelId == null) {
 				setResult(-1);

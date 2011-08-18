@@ -62,7 +62,7 @@ public class StatusBar extends LinearLayout {
 		// TODO Auto-generated method stub
 		super.onDraw(canvas);
 		
-		int level = mGameView.mCurrentLevel.level;
+		String level = mGameView.mCurrentLevel.level;
 		mLevelView.setText("Level: " + level);
 		
 		int moves = mGameView.mCurrentLevel.moves;

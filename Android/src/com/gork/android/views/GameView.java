@@ -20,7 +20,15 @@ along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.gork.android.views;
 
+import java.io.IOException;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.XMLReaderFactory;
+
 import android.content.Context;
+import android.content.res.AssetManager;
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.os.Handler;
@@ -36,6 +44,7 @@ import com.gork.android.R;
 import com.gork.android.components.Level;
 import com.gork.android.components.Player;
 import com.gork.android.utils.ImageManager;
+import com.gork.android.utils.LevelXmlParser;
 
 /**
  * The view for GameActivity. This is where most of the important game-time
@@ -50,7 +59,7 @@ public class GameView extends View {
 	 * An Enum to store the current state of the game.
 	 */
 	public static enum State {
-		INIT, RUNNING, PAUSED
+		INIT, RUNNING, PAUSED, ERROR
 	}
 
 	public State mState;
@@ -138,13 +147,32 @@ public class GameView extends View {
 	 * Loads a level
 	 * @param levelId
 	 */
-	public void loadLevel(int levelId) {
+	public void loadLevel(String levelId) {
 		mXOffset = 10;
 		mYOffset = 10;
 
-		mCurrentLevel = new Level(levelId);
-		mState = State.RUNNING;
-		update();
+		try {
+			mCurrentLevel = new Level(levelId);
+			LevelXmlParser handler = new LevelXmlParser(mCurrentLevel);
+			XMLReader xr = XMLReaderFactory.createXMLReader();
+			
+			xr.setContentHandler(handler);
+			xr.setErrorHandler(handler);
+			
+			AssetManager assets = getContext().getAssets();
+			
+			xr.parse(new InputSource(assets.open("Levels/level_" + levelId + ".xml")));
+			
+			mState = State.RUNNING;
+			update();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (RuntimeException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -164,8 +192,8 @@ public class GameView extends View {
 
 		if (mCurrentLevel != null) {
 			// Draw tiles
-			for (int x = 0; x < mCurrentLevel.mTileWidth; x += 1) {
-				for (int y = 0; y < mCurrentLevel.mTileHeight; y += 1) {
+			for (int x = 0; x < mCurrentLevel.getWidth(); x += 1) {
+				for (int y = 0; y < mCurrentLevel.getHeight(); y += 1) {
 					float screenX = mXOffset + x * mTileSize;
 					float screenY = mYOffset + y * mTileSize;
 					int image = ImageManager.IMAGE_BLANK;

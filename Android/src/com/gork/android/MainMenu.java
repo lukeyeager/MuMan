@@ -60,7 +60,7 @@ public class MainMenu extends ListActivity {
 		} else if (entry == "Play") {
 			super.onListItemClick(l, v, position, id);
 	        Intent i = new Intent(this, GameActivity.class);
-	        i.putExtra(GameActivity.LEVEL, 1);
+	        i.putExtra(GameActivity.LEVEL, "1_1");
 	        startActivityForResult(i, 0);
 		}
 	}

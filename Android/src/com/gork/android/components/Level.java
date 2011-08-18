@@ -29,32 +29,39 @@ import com.gork.android.utils.Coordinate;
  */
 public class Level {
 	
-	public int mTileWidth = 12;
-	public int mTileHeight = 8;
+	public static final int maxTileWidth = 12;
+	public static final int maxTileHeight = 8;
+	private Integer mTileWidth;
+	private Integer mTileHeight;
 	
 	public Player player;
 	public Component[][] components;
 	
-	public int moves = 0;
-	public Integer level;
+	public int moves;
+	public String level;
 
 	/**
 	 * Default Constructor
 	 * @param levelId Which level to load.
 	 */
-	public Level(int levelId) {
+	public Level(String levelId) {
 		level = levelId;
-		switch (levelId) {
-		case 1:
-			player = new Player(6,4);
-			components = new Component[mTileWidth][mTileHeight];
-			components[6][0] = new Wall();
-			components[8][1] = new Goal(this);
-			break;
-		default:
-			throw new RuntimeException("Unknown level: " + levelId);
-		}
+		moves = 0;
+		components = new Component[maxTileWidth][maxTileHeight];
 	}
+	
+	public void setDimensions(int width, int height) {
+		if (width > maxTileWidth | width < 1 
+				| height > maxTileHeight | height < 1) {
+			throw new RuntimeException("Invalid dimensions");
+		}
+		mTileWidth = width;
+		mTileHeight = height;
+		components = new Component[width][height];
+	}
+	
+	public int getWidth() { return mTileWidth; }
+	public int getHeight() { return mTileHeight; }
 	
 	/**
 	 * Updates the whole level, including the Player if he's moving.
@@ -100,5 +107,4 @@ public class Level {
 	public void win() {
 		
 	}
-
 }
