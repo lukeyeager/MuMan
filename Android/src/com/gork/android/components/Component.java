@@ -20,7 +20,6 @@ along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.gork.android.components;
 
-import com.gork.android.utils.Coordinate;
 
 /**
  * Abstract class from which all components are derived (except Player).
@@ -28,11 +27,6 @@ import com.gork.android.utils.Coordinate;
  *
  */
 public abstract class Component {
-	
-	private Coordinate position;
-	
-	public int getX() { return position.x; }
-	public int getY() { return position.y; }
 	
 	/**
 	 * Each component should define what happens when it collides with a Player

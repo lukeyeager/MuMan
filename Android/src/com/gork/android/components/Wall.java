@@ -29,6 +29,10 @@ import com.gork.android.utils.ImageManager;
  */
 public class Wall extends Component {
 
+	public Wall() {
+		
+	}
+	
 	@Override
 	public void onCollision(Player p) {
 		p.stop();

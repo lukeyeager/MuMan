@@ -20,6 +20,8 @@ along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.gork.android.components;
 
+import com.gork.android.utils.Coordinate;
+
 /**
  * Holds all data for the current level, including Player and all Components
  * @author Luke
@@ -46,6 +48,8 @@ public class Level {
 		case 1:
 			player = new Player(6,4);
 			components = new Component[mTileWidth][mTileHeight];
+			components[6][0] = new Wall();
+			components[8][1] = new Goal(this);
 			break;
 		default:
 			throw new RuntimeException("Unknown level: " + levelId);
@@ -56,39 +60,45 @@ public class Level {
 	 * Updates the whole level, including the Player if he's moving.
 	 */
 	public void update() {
+		
+		// The next position for Player
+		Coordinate next = new Coordinate(player.getX(), player.getY());
+		
 		switch (player.movement){
-		case NONE:
-			return;
 		case UP:
-			if (player.getY() < 1) {
-				player.stop();
-			} else {
-				player.move();
-			}
+			next.y--;
 			break;
 		case DOWN:
-			if (player.getY() >= mTileHeight - 1) {
-				player.stop();
-			} else {
-				player.move();
-			}
+			next.y++;
 			break;
 		case RIGHT:
-			if (player.getX() >= mTileWidth - 1) {
-				player.stop();
-			} else {
-				player.move();
-			}
+			next.x++;
 			break;
 		case LEFT:
-			if (player.getX() < 1) {
-				player.stop();
-			} else {
-				player.move();
-			}
+			next.x--;
 			break;
+		case NONE:
+		default:
+			return;
+		}
+		if (next.y < 0 | next.y >= mTileHeight
+				| next.x < 0 | next.x >= mTileWidth) {
+			collideWithWall();
+		} else {
+			if (components[next.x][next.y] == null) {
+				player.move();
+			} else {
+				components[next.x][next.y].onCollision(player);
+			}
 		}
 	}
-
+	
+	private void collideWithWall() {
+		player.stop();
+	}
+	
+	public void win() {
+		
+	}
 
 }

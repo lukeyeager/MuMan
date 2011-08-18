@@ -41,7 +41,7 @@ public class GameActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		try {
+		//try {
 				
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
@@ -63,6 +63,7 @@ public class GameActivity extends Activity {
 				mGameView.loadLevel(levelId);
 			}
 		
+		try {
 		} catch (Exception e) {
 			// this is the line of code that sends a real error message to the log
 			Log.e("ERROR", "ERROR IN CODE: " + e.toString());

@@ -38,6 +38,7 @@ public class ImageManager {
     public static final int IMAGE_BLANK = 0;
     public static final int IMAGE_PLAYER = 1;
     public static final int IMAGE_WALL = 2;
+    public static final int IMAGE_GOAL = 3;
     
     private Integer mTileSize;
     
@@ -52,9 +53,11 @@ public class ImageManager {
     	mTileSize = tileSize;
 
     	Resources r = context.getResources();
-    	mImages = new Bitmap[3];
+    	mImages = new Bitmap[4];
     	loadImage(IMAGE_BLANK, r.getDrawable(R.drawable.blank));
     	loadImage(IMAGE_PLAYER, r.getDrawable(R.drawable.player));
+    	loadImage(IMAGE_WALL, r.getDrawable(R.drawable.wall));
+    	loadImage(IMAGE_GOAL, r.getDrawable(R.drawable.goal));
     }
     
 	/**
