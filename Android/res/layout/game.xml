@@ -18,39 +18,59 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>. 
  -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	android:orientation="vertical"
-	android:layout_width="match_parent"
-	android:layout_height="match_parent">
-
-	<com.gork.android.views.GameView
-		android:id="@+id/gameview"
-		android:gravity="center"
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+ 
+<!-- A FrameLayout -->
+<com.gork.android.views.GameView xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/gameview"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+	>
+	
+	<ImageView 
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:src="@drawable/game_background"
+		android:scaleType="center"
 		/>
+	
+	<RelativeLayout
+			android:layout_width="@dimen/screen_width"
+			android:layout_height="@dimen/screen_height"
+			android:layout_gravity="center"
+			android:background="@drawable/black"
+		>
 		
-	<LinearLayout
-		android:orientation="horizontal"
-		android:layout_width="match_parent"
-		android:layout_height="wrap_content" >
-		
-		<TextView
-			android:id="@+id/statusbar_level"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_weight="1"
-			android:gravity="right"
-			android:text="@string/statusbar_level" />
+		<com.gork.android.views.LevelView
+			android:id="@+id/levelview"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_centerInParent="true"
+			/>
+	
+		<RelativeLayout
+				android:orientation="horizontal"
+				android:layout_width="match_parent"
+				android:layout_height="@dimen/statusbar_height"
+				android:layout_alignParentBottom="true"
+			>
+			<TextView
+				android:id="@+id/statusbar_level"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					android:layout_margin="10px"
+					android:layout_alignParentLeft="true"
+					android:text="@string/statusbar_level"
+				/>
 			
-		<TextView
-			android:id="@+id/statusbar_moves"
-			android:layout_width="wrap_content"
-			android:layout_height="wrap_content" 
-			android:layout_weight="1"
-			android:gravity="left"
-			android:text="@string/statusbar_moves" />
+			<TextView
+				android:id="@+id/statusbar_moves"
+					android:layout_width="wrap_content"
+					android:layout_height="fill_parent"
+					android:layout_margin="10px"
+					android:layout_toRightOf="@id/statusbar_level"
+					android:text="@string/statusbar_moves"
+				/>
+		</RelativeLayout>
 			
-	</LinearLayout>
-		
-</LinearLayout>
+	</RelativeLayout>
+</com.gork.android.views.GameView>
