@@ -4,7 +4,10 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.gork.android.components.*;
+import com.gork.android.components.Goal;
+import com.gork.android.components.Level;
+import com.gork.android.components.Player;
+import com.gork.android.components.Wall;
 
 public class LevelXmlParser extends DefaultHandler {
 
@@ -23,9 +26,9 @@ public class LevelXmlParser extends DefaultHandler {
 
 	private Level level;
 
-	public LevelXmlParser(Level lvl) {
+	public LevelXmlParser(Level mLevel) {
 		super();
-		level = lvl;
+		level = mLevel;
 	}
 
 	@Override

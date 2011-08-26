@@ -36,3 +36,7 @@
 ehthumbs.db
 Icon?
 Thumbs.db
+
+# Calculator files #
+####################
+*.8xp

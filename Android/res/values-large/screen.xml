@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_width">640px</dimen>
+    <dimen name="screen_height">442px</dimen>
+    <dimen name="statusbar_height">38px</dimen>
+    
+    <integer name="tileSize">40</integer>
+</resources>

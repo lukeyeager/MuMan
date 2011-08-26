@@ -22,9 +22,10 @@ package com.gork.android;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
-import com.gork.android.views.GameView;
+import com.gork.android.views.*;
 
 /**
  * Activity for the game screen
@@ -47,6 +48,8 @@ public class GameActivity extends Activity {
 			super.onCreate(savedInstanceState);
 			
 			System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
+			//int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN; // | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+	        //getWindow().setFlags(flags, flags);
 			
 			setContentView(R.layout.game);
 	
@@ -62,6 +65,8 @@ public class GameActivity extends Activity {
 				finish();
 			} else {
 				mGameView = (GameView) findViewById(R.id.gameview);
+				mGameView.setLevelView(findViewById(R.id.levelview));
+				mGameView.setStatusBar(findViewById(R.id.statusbar_level), findViewById(R.id.statusbar_moves) );
 				mGameView.loadLevel(levelId);
 			}
 		
@@ -96,5 +101,8 @@ public class GameActivity extends Activity {
 		if (savedState != null) {
 			mGameView.mState = savedState;
 		}
+		
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 	}
 }

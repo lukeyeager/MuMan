@@ -54,7 +54,7 @@ public class ImageManager {
 
     	Resources r = context.getResources();
     	mImages = new Bitmap[4];
-    	loadImage(IMAGE_BLANK, r.getDrawable(R.drawable.blank));
+    	loadImage(IMAGE_BLANK, r.getDrawable(R.drawable.blank_tile));
     	loadImage(IMAGE_PLAYER, r.getDrawable(R.drawable.player));
     	loadImage(IMAGE_WALL, r.getDrawable(R.drawable.wall));
     	loadImage(IMAGE_GOAL, r.getDrawable(R.drawable.goal));
