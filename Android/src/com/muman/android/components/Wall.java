@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+/*
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
 
@@ -17,16 +16,30 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
--->
+*/
 
-<resources>
-    <dimen name="screen_width">960px</dimen>
-    <dimen name="screen_height">640px</dimen>
-    
-    <dimen name="statusbar_height">72px</dimen>
-    
-    <dimen name="popup_width">300px</dimen>
-    <dimen name="popup_height">200px</dimen>
-    
-    <integer name="tileSize">60</integer>
-</resources>
+package com.muman.android.components;
+
+import com.muman.android.utils.ImageManager;
+
+/**
+ * One of the basic components. A Wall simply blocks movement.
+ * @author Luke
+ *
+ */
+public class Wall extends Component {
+	
+	/**
+	 * This collision simply stops the Player's movement
+	 */
+	@Override
+	public void onCollision(Player player) {
+		player.stop();
+	}
+
+	@Override
+	public int getImage() {
+		return ImageManager.IMAGE_WALL;
+	}
+
+}

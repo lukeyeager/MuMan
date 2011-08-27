@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+/*
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
 
@@ -17,16 +16,38 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
--->
+*/
 
-<resources>
-    <dimen name="screen_width">960px</dimen>
-    <dimen name="screen_height">640px</dimen>
-    
-    <dimen name="statusbar_height">72px</dimen>
-    
-    <dimen name="popup_width">300px</dimen>
-    <dimen name="popup_height">200px</dimen>
-    
-    <integer name="tileSize">60</integer>
-</resources>
+package com.muman.android.utils;
+
+/**
+ * A helpful class to define a 2D location in the game matrix.
+ * @author Luke
+ *
+ */
+public class Coordinate {
+	public int x;
+	public int y;
+
+	/**
+	 * Constructor
+	 * @param newX
+	 * @param newY
+	 */
+	public Coordinate(int newX, int newY) {
+		x = newX;
+		y = newY;
+	}
+
+	/**
+	 * Equality operator
+	 * @param other
+	 * @return True if both x and y are equal.
+	 */
+	public boolean equals(Coordinate other) {
+		if (x == other.x && y == other.y) {
+			return true;
+		}
+		return false;
+	}
+}
