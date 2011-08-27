@@ -31,6 +31,8 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.gork.android.R;
+
 /**
  * The view for GameActivity. This is where most of the important game-time
  * program execution occurs.
@@ -44,14 +46,15 @@ public class GameView extends FrameLayout {
 	 * An Enum to store the current state of the game.
 	 */
 	public static enum State {
-		UNINITIALIZED, RUNNING, PAUSED
+		UNINITIALIZED, RUNNING, PAUSED, GAMEOVER
 	}
 
 	public State mState = State.UNINITIALIZED;
 
-	public LevelView mLevel;
+	public LevelView mLevelView;
 	private TextView mStatusBarLevel;
 	private TextView mStatusBarMoves;
+	private PopupView mPopupView;
 
 	/**
 	 * Create a simple handler that we can use to cause animation to happen. We
@@ -63,13 +66,22 @@ public class GameView extends FrameLayout {
 	 */
 	class RefreshHandler extends Handler {
 
-		private static final long mScreenRefreshDelay = 100;
+		private static final long mScreenRefreshDelay = 17;
 
 		@Override
 		public void handleMessage(Message msg) {
-			// Don't update unless the game is Running
-			if (GameView.this.mState == GameView.State.RUNNING) {
+			
+			//TODO: calculate how long each step takes to ensure 30 fps
+			
+			switch (GameView.this.mState) {
+			case RUNNING:
 				GameView.this.update();
+				break;
+			case GAMEOVER:
+				GameView.this.invalidate();
+				break;
+			default:
+				break;
 			}
 			sleep(mScreenRefreshDelay);
 		}
@@ -83,14 +95,34 @@ public class GameView extends FrameLayout {
 	private RefreshHandler mRedrawHandler = new RefreshHandler();
 	
 	public void update() {
-		mLevel.update();
-		mLevel.invalidate();
-
-	    mStatusBarLevel.setText("Level: " + mLevel.mLevel.level);
-		mStatusBarLevel.invalidate();
+		if (mLevelView == null | mLevelView.mLevel == null) {
+			return;
+		}
 		
-	    mStatusBarMoves.setText("Moves: " + mLevel.mLevel.moves);
-	    mStatusBarMoves.invalidate();
+		switch (mLevelView.mLevel.mState) {
+		case RUNNING:
+			mLevelView.update();
+			mLevelView.invalidate();
+	
+		    mStatusBarLevel.setText("Level: " + mLevelView.mLevel.id);
+			mStatusBarLevel.invalidate();
+			
+		    mStatusBarMoves.setText("Moves: " + mLevelView.mLevel.mMoves);
+		    mStatusBarMoves.invalidate();
+		    break;
+		case WIN:
+			mState = State.PAUSED;
+			mPopupView.createWinGamePopup();
+			break;
+		case LOSE:
+			mState = State.PAUSED;
+			mPopupView.createLoseGamePopup();
+			break;
+		default:
+			break;
+		}
+		
+		
 	}
 	
 	/** 
@@ -102,23 +134,49 @@ public class GameView extends FrameLayout {
 		super(context, attrs);
 	}
 	
-	public void setLevelView(View view) {
-		mLevel = (LevelView) view;
-	}
-	
-	public void setStatusBar(View level, View moves) {
-		mStatusBarLevel = (TextView) level;
-		mStatusBarMoves = (TextView) moves;
+	/**
+	 * Loads all children Views for this view
+	 * @return true on success
+	 */
+	public boolean loadChildren() {
+		try {
+			mLevelView = (LevelView) findViewById(R.id.levelview);
+			if (mLevelView == null)
+				return false;
+			
+			mStatusBarLevel = (TextView) findViewById(R.id.statusbar_level);
+			if (mStatusBarLevel == null)
+				return false;
+			
+			mStatusBarMoves = (TextView) findViewById(R.id.statusbar_moves);
+			if (mStatusBarMoves == null)
+				return false;
+			
+			findViewById(R.id.restart_icon).setOnClickListener(
+					new OnClickListener() {
+
+						@Override
+						public void onClick(View arg0) {
+							GameView.this.loadLevel(mLevelView.mLevel.id);
+						}
+					}
+				);
+			
+			mPopupView = (PopupView) findViewById(R.id.popup);
+		} catch (Exception e) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
-	 * 
+	 * Forces mLevelView to load a new level
 	 * @param levelId
 	 */
 	public void loadLevel(String levelId) {
-		mLevel.loadLevel(levelId);
+		mLevelView.loadLevel(levelId);
 		mState = State.RUNNING;
-		// Start refresh loop
+		mPopupView.setVisibility(INVISIBLE);
 		mRedrawHandler.sleep(0);
 	}
 
@@ -128,7 +186,7 @@ public class GameView extends FrameLayout {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent msg) {
 		
-		if (mLevel != null && mLevel.processKey(keyCode, msg)) {
+		if (mLevelView != null && mLevelView.processKey(keyCode, msg)) {
 			return true;
 		}
 
@@ -141,12 +199,15 @@ public class GameView extends FrameLayout {
 	 */
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
+		super.onTouchEvent(event);
+		
 		processTouchEvent(event.getAction(), event.getX(), event.getY());
 
 		int historySize = event.getHistorySize();
 		for (int i = 0; i < historySize; i++) {
 			processTouchEvent(event.getAction(), event.getX(), event.getY());
 		}
+		
 		return true;
 	}
 
@@ -160,7 +221,7 @@ public class GameView extends FrameLayout {
 	 * @return
 	 */
 	private boolean processTouchEvent(int action, float eventX, float eventY) {
-		if (mLevel != null && mLevel.processTouchEvent(action, eventX, eventY)) {
+		if (mLevelView != null && mLevelView.processTouchEvent(action, eventX, eventY)) {
 			return true;
 		}
 		return false;
@@ -180,8 +241,8 @@ public class GameView extends FrameLayout {
 	    int height = MeasureSpec.getSize(heightMeasureSpec);
 	    setMeasuredDimension(width, height);
 	    
-	    if (!isInEditMode() && mLevel != null) {
-		    mLevel.measure(widthMeasureSpec, heightMeasureSpec);
+	    if (!isInEditMode() && mLevelView != null) {
+		    mLevelView.measure(widthMeasureSpec, heightMeasureSpec);
 	    }
 	}
 	
@@ -190,8 +251,8 @@ public class GameView extends FrameLayout {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		
-		if (!isInEditMode() && mLevel != null) {
-			mLevel.draw(canvas);
+		if (!isInEditMode() && mLevelView != null) {
+			mLevelView.draw(canvas);
 			mStatusBarLevel.draw(canvas);
 			mStatusBarMoves.draw(canvas);
 		}

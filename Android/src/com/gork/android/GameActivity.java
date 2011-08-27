@@ -23,9 +23,8 @@ package com.gork.android;
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 
-import com.gork.android.views.*;
+import com.gork.android.views.GameView;
 
 /**
  * Activity for the game screen
@@ -42,45 +41,28 @@ public class GameActivity extends Activity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		//try {
-				
-			// TODO Auto-generated method stub
-			super.onCreate(savedInstanceState);
-			
-			System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
-			//int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN; // | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
-	        //getWindow().setFlags(flags, flags);
-			
-			setContentView(R.layout.game);
-	
-			// Try loading levelId from savedInstanceState
-			String levelId = (savedInstanceState == null) ? null : savedInstanceState.getString(LEVEL);
-			if (levelId == null) {
-				// Otherwise, try loading levelId from the Intent
-				Bundle extras = getIntent().getExtras();
-				levelId = (extras != null) ? extras.getString(LEVEL) : null;
-			}
-			if (levelId == null) {
-				setResult(-1);
-				finish();
-			} else {
-				mGameView = (GameView) findViewById(R.id.gameview);
-				mGameView.setLevelView(findViewById(R.id.levelview));
-				mGameView.setStatusBar(findViewById(R.id.statusbar_level), findViewById(R.id.statusbar_moves) );
-				mGameView.loadLevel(levelId);
-			}
+		super.onCreate(savedInstanceState);
 		
-		try {
-		} catch (Exception e) {
-			// this is the line of code that sends a real error message to the log
-			Log.e("ERROR", "ERROR IN CODE: " + e.toString());
-	 
-			// this is the line that prints out the location in
-			// the code where the error occurred.
-			e.printStackTrace();
-			
+		System.setProperty("org.xml.sax.driver", "org.xmlpull.v1.sax2.Driver");
+		//int flags = WindowManager.LayoutParams.FLAG_FULLSCREEN; // | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+        //getWindow().setFlags(flags, flags);
+		
+		setContentView(R.layout.game);
+
+		// Try loading levelId from savedInstanceState
+		String levelId = (savedInstanceState == null) ? null : savedInstanceState.getString(LEVEL);
+		if (levelId == null) {
+			// Otherwise, try loading levelId from the Intent
+			Bundle extras = getIntent().getExtras();
+			levelId = (extras != null) ? extras.getString(LEVEL) : null;
+		}
+		if (levelId == null) {
 			setResult(-1);
 			finish();
+		} else {
+			mGameView = (GameView) findViewById(R.id.gameview);
+			mGameView.loadChildren();
+			mGameView.loadLevel(levelId);
 		}
 	}
 	
@@ -105,4 +87,12 @@ public class GameActivity extends Activity {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 	}
+
+	@Override
+	public void onBackPressed() {
+		// TODO: Create a pause screen here
+		super.onBackPressed();
+	}
+	
+	
 }

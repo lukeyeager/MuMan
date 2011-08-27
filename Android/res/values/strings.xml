@@ -18,9 +18,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 -->
+
 <resources>
     <string name="hello">Hello World, MainMenu!</string>
     <string name="app_name">Gork</string>
+    
+    <string name="mainmenu_start">Start</string>
+    <string name="mainmenu_exit">Exit</string>
     
     <string name="statusbar_level">Level</string>
     <string name="statusbar_moves">Moves</string>

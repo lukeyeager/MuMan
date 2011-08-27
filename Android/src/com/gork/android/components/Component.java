@@ -20,9 +20,8 @@ along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.gork.android.components;
 
-
 /**
- * Abstract class from which all components are derived (except Player).
+ * Abstract class from which all components are derived.
  * @author Luke
  *
  */
@@ -35,7 +34,7 @@ public abstract class Component {
 	public abstract void onCollision(Player player);
 	
 	/**
-	 * Each component should define which 
+	 * Each component should define which image is drawn by ImageManager
 	 */
 	public abstract int getImage();
 }

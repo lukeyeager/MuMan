@@ -29,12 +29,21 @@ import com.gork.android.utils.Coordinate;
  */
 public class Player {
 	
-	// Player location
+	/**
+	 * Player location
+	 */
 	private Coordinate position;
-	
+	/**
+	 * Getter for the X-position
+	 * @return
+	 */
 	public int getX() {
 		return position.x;
 	}
+	/**
+	 * Getter for the Y-position
+	 * @return
+	 */
 	public int getY() {
 		return position.y;
 	}
@@ -47,11 +56,13 @@ public class Player {
 	public static enum Movement {
 		NONE, UP, DOWN, RIGHT, LEFT
 	}
-	
+	/**
+	 * The current player Movement
+	 */
 	public Movement movement;
 	
-	/** Player Constructor
-	 * 
+	/**
+	 * Default constructor
 	 * @param newX Starting position
 	 * @param newY Starting position
 	 */ 
@@ -61,7 +72,7 @@ public class Player {
 	}
 	
 	/**
-	 * Updates a Player's location according to his movement
+	 * Updates a Player's location according to its movement
 	 */
 	public void move() {
 		switch (movement) {

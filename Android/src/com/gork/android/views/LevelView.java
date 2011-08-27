@@ -20,10 +20,7 @@ along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.gork.android.views;
 
-import java.io.IOException;
-
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
@@ -35,10 +32,10 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
 import com.gork.android.R;
 import com.gork.android.components.Level;
+import com.gork.android.utils.GameException;
 import com.gork.android.utils.ImageManager;
 import com.gork.android.utils.LevelXmlParser;
 
@@ -75,8 +72,8 @@ public class LevelView extends View {
     }
 	
 	/**
-	 * Loads a level
-	 * @param levelId
+	 * Loads a level from an XML file
+	 * @param levelId The name of the XML file under assets/Levels
 	 */
 	public void loadLevel(String levelId) {
 		try {
@@ -94,11 +91,7 @@ public class LevelView extends View {
 			mState = State.RUNNING;
 			update();
 			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (RuntimeException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -118,10 +111,10 @@ public class LevelView extends View {
 	// Input
 	//
 	//==================================
-	
-	private float beginMotionX = 0;
-	private float beginMotionY = 0;
 
+	/**
+	 * Invoked by GameView when a touch event occurs
+	 */
 	public boolean processKey(int keyCode, KeyEvent msg) {
 
 		boolean recognized = false;
@@ -145,8 +138,20 @@ public class LevelView extends View {
 		
 		return recognized;
 	}
+	
+	/**
+	 * X-component of initial touch location for a swipe
+	 */
+	private float beginMotionX = 0;
+	/**
+	 * Y-component of initial touch location for a swipe
+	 */
+	private float beginMotionY = 0;
 
-	public boolean processTouchEvent(int action, float eventX, float eventY) {
+	/**
+	 * Invoked by GameView when a touch event occurs. 
+	 */
+	public boolean processTouchEvent(int action, float eventX, float eventY) throws GameException {
 
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
@@ -159,8 +164,7 @@ public class LevelView extends View {
 
 		case MotionEvent.ACTION_UP:
 			if (beginMotionX == 0 | beginMotionY == 0) {
-				debug("Touch up found when no touch down registered!");
-				return false;
+				throw new GameException("Touch up found when no touch down registered!");
 			}
 			float diffX = eventX - beginMotionX;
 			float diffY = eventY - beginMotionY;
@@ -188,11 +192,6 @@ public class LevelView extends View {
 			//debug("Ignored touch event: " + action + " at (" + eventX + ',' + eventY + ')');
 			return false;
 		}
-	}
-	
-
-	private void debug(String msg) {
-		Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
 	}
 	
 	//==================================

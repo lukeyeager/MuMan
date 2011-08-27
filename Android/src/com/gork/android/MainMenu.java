@@ -20,13 +20,11 @@ along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.gork.android;
 
-import android.app.ListActivity;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View.OnClickListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,47 +34,46 @@ import android.widget.Toast;
  * @author Luke
  * 
  */
-public class MainMenu extends ListActivity {
-
+public class MainMenu extends Activity {
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		setContentView(R.layout.main_menu);
+		
+		((TextView) findViewById(R.id.mainmenu_start)).setOnClickListener(
+				new OnClickListener() {
 
-		String[] entries = new String[] { "Play", "Metrics", "Exit" };
-		setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item,
-				entries));
+					@Override
+					public void onClick(View arg0) {
+						Intent i = new Intent(MainMenu.this, GameActivity.class);
+						i.putExtra(GameActivity.LEVEL, "1_1");
+						startActivityForResult(i, 0);
+					}
+					
+				}
+		);
+		
+		((TextView) findViewById(R.id.mainmenu_exit)).setOnClickListener(
+				new OnClickListener() {
 
-	}
-
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
-		super.onListItemClick(l, v, position, id);
-
-		CharSequence entry = ((TextView) v).getText();
-
-		if (entry.equals("Exit")) {
-			finish();
-
-		} else if (entry.equals("Play")) {
-			super.onListItemClick(l, v, position, id);
-			Intent i = new Intent(this, GameActivity.class);
-			i.putExtra(GameActivity.LEVEL, "1_1");
-			startActivityForResult(i, 0);
-		} else if (entry.equals("Metrics")) {
-			DisplayMetrics metrics = new DisplayMetrics();
-			getWindowManager().getDefaultDisplay().getMetrics(metrics);
-			Toast.makeText(getApplicationContext(), "Density: " + metrics.densityDpi, Toast.LENGTH_SHORT).show();
-			Toast.makeText(getApplicationContext(), "Resolution: " + metrics.widthPixels + "x" + metrics.heightPixels, Toast.LENGTH_SHORT).show();
-		}
+					@Override
+					public void onClick(View arg0) {
+						finish();
+					}
+					
+				}
+		);
+		
 	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		// if (resultCode == -1) {
-		// Toast.makeText(getApplicationContext(), "An error occurred.",
-		// Toast.LENGTH_SHORT);
-		// }
+		if (resultCode == -1) {
+			Toast.makeText(getApplicationContext(), "An error occurred.", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 }

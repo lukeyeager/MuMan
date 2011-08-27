@@ -28,14 +28,13 @@ import com.gork.android.utils.ImageManager;
  *
  */
 public class Wall extends Component {
-
-	public Wall() {
-		
-	}
 	
+	/**
+	 * This collision simply stops the Player's movement
+	 */
 	@Override
-	public void onCollision(Player p) {
-		p.stop();
+	public void onCollision(Player player) {
+		player.stop();
 	}
 
 	@Override

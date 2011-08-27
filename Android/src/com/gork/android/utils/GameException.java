@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- 
+/*
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
 
@@ -17,10 +16,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with Gork.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
- -->
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="10dp"
-    android:textSize="16sp" >
-</TextView>
+*/
+
+
+package com.gork.android.utils;
+
+public class GameException extends RuntimeException {
+
+	private static final long serialVersionUID = 1L;
+
+	public GameException(String detailMessage) {
+		super(detailMessage);
+	}
+	
+	
+}
