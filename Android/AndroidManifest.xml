@@ -20,7 +20,9 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-	package="com.muman.android" android:versionCode="1" android:versionName="1.0">
+	package="com.muman.android"
+	android:versionCode="1" android:versionName="0.1">
+	
 	<uses-sdk android:minSdkVersion="8" />
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
@@ -41,6 +43,12 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 			android:name=".GameActivity"
 				android:screenOrientation="landscape"
 				android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+			/>
+			
+		<activity
+			android:name=".PopupActivity"
+				android:screenOrientation="landscape"
+				android:theme="@android:style/Theme.Dialog"
 			/>
 
 	</application>

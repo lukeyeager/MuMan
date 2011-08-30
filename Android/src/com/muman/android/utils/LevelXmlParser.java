@@ -24,10 +24,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.muman.android.components.Goal;
-import com.muman.android.components.Level;
-import com.muman.android.components.Player;
-import com.muman.android.components.Wall;
+import com.muman.android.components.*;
 
 public class LevelXmlParser extends DefaultHandler {
 
@@ -66,6 +63,8 @@ public class LevelXmlParser extends DefaultHandler {
 			parseWall(attributes);
 		} else if (localName.equals("Goal")) {
 			parseGoal(attributes);
+		}  else if (localName.equals("Spiker")) {
+			parseSpiker(attributes);
 		}
 	}
 
@@ -191,6 +190,21 @@ public class LevelXmlParser extends DefaultHandler {
 
 		Coordinate c = parseAttrsForPosition(attrs);
 		level.components[c.x][c.y] = new Goal(level);
+	}
+
+	/**
+	 * Parse a Spiker component
+	 * 
+	 * @param attrs
+	 * @throws SAXException
+	 */
+	private void parseSpiker(Attributes attrs) throws SAXException {
+		if (!parsingComponents) {
+			throw new SAXException("<Spiker> node must be within <Components>");
+		}
+
+		Coordinate c = parseAttrsForPosition(attrs);
+		level.components[c.x][c.y] = new Spiker(level);
 	}
 
 	/**

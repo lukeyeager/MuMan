@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2011 Luke Yeager and Sam Bryan
+$Id$
+
+This file is part of MuMan.
+
+MuMan is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+MuMan is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>. 
+ -->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="@dimen/popup_width"
+		android:layout_height="@dimen/popup_height"
+		android:layout_centerInParent="true"
+		android:background="@drawable/black"
+		android:visibility="visible"
+	>
+	
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/popup_win"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true"
+			android:layout_margin="10px"
+		/>
+	
+	<ImageView
+		android:id="@+id/popup_restart"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:src="@drawable/restart_icon"
+			android:scaleType="centerCrop"
+			android:layout_alignParentBottom="true"
+		/>
+
+</RelativeLayout>
+		

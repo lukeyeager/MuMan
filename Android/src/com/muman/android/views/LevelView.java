@@ -57,17 +57,24 @@ public class LevelView extends View {
 	
 	Level mLevel = null;
 
-	public int mTileSize = 30;
+	/**
+	 * The size (in pixels) of each square tile
+	 */
+	public int mTileSize;
+	/**
+	 * The size (in pixels) of the border surrounding the Level
+	 */
+	private int mBorderSize;
 
 	private ImageManager mImageManager;
 
 	private final Paint mPaint = new Paint();
 	
-	
 	public LevelView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	
-		mTileSize = context.getResources().getInteger(R.integer.tileSize);
+		mTileSize = context.getResources().getInteger(R.integer.tile_size);
+		mBorderSize = context.getResources().getInteger(R.integer.border_width);
 		mImageManager = new ImageManager(getContext(), mTileSize);
     }
 	
@@ -204,14 +211,13 @@ public class LevelView extends View {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		
-		int width = 1;
-		int height = 1;
-		if (mLevel != null) {
-		    width = mLevel.getWidth();
-		    height = mLevel.getHeight();
+		// Defaults just for viewing in Eclipse
+		int width = 150;
+		int height = 100;
+		if (!isInEditMode() && mLevel != null) {
+		    width = mLevel.getWidth() * mTileSize + 2 * mBorderSize;
+		    height = mLevel.getHeight() * mTileSize + 2 * mBorderSize;
 		}
-		width *= mTileSize;
-		height *= mTileSize;
 	    setMeasuredDimension(width, height);
 	}
 	
@@ -223,8 +229,8 @@ public class LevelView extends View {
 			// Draw components
 			for (int x = 0; x < mLevel.getWidth(); x += 1) {
 				for (int y = 0; y < mLevel.getHeight(); y += 1) {
-					float screenX = x * mTileSize;
-					float screenY = y * mTileSize;
+					float screenX = x * mTileSize + mBorderSize;
+					float screenY = y * mTileSize + mBorderSize;
 					int image = ImageManager.IMAGE_BLANK;
 					if (mLevel.components[x][y] != null) {
 						image = mLevel.components[x][y].getImage();
@@ -237,8 +243,8 @@ public class LevelView extends View {
 			// Draw player
 			canvas.drawBitmap(
 					mImageManager.getImage(ImageManager.IMAGE_PLAYER),
-					mLevel.player.getX() * mTileSize,
-					mLevel.player.getY() * mTileSize,
+					mLevel.player.getX() * mTileSize + mBorderSize,
+					mLevel.player.getY() * mTileSize + mBorderSize,
 					mPaint);
 		}
 	}

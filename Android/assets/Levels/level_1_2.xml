@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
@@ -19,25 +19,14 @@ You should have received a copy of the GNU General Public License
 along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 -->
 
-<resources>
-    <string name="app_name">MuMan</string>
-    
-    <string name="mainmenu_start">Start</string>
-    <string name="mainmenu_exit">Exit</string>
-    
-    <string name="statusbar_level">Level</string>
-    <string name="statusbar_moves">Moves</string>
-    
-    <string name="popup_text">Text goes here</string>
-    <string name="popup_win">
-    	You have won.\n
-    	You must be the best person ever.
-    </string>
-    
-    <string name="popup_lose">
-    	You have lost.\n
-    	You must be the worst person ever.
-    </string>
-    
-    <string name="popup_pause">Game Paused</string>
-</resources>
+<Level id="1_2"
+	width="15"
+	height="9" >
+	
+	<Player x="2" y="4" />
+	<Components>
+		<Wall x="12" y="4" />
+		<Spiker x="2" y="2" />
+		<Goal x="11" y="7" />
+	</Components>
+</Level>

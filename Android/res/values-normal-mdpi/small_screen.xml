@@ -20,24 +20,12 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 -->
 
 <resources>
-    <string name="app_name">MuMan</string>
+	<string name="screen_size">Small</string>
+	
+    <dimen name="screen_width">440px</dimen>
+    <dimen name="screen_height">295px</dimen>
     
-    <string name="mainmenu_start">Start</string>
-    <string name="mainmenu_exit">Exit</string>
-    
-    <string name="statusbar_level">Level</string>
-    <string name="statusbar_moves">Moves</string>
-    
-    <string name="popup_text">Text goes here</string>
-    <string name="popup_win">
-    	You have won.\n
-    	You must be the best person ever.
-    </string>
-    
-    <string name="popup_lose">
-    	You have lost.\n
-    	You must be the worst person ever.
-    </string>
-    
-    <string name="popup_pause">Game Paused</string>
+    <integer name="tile_size">28</integer>
+    <integer name="border_width">10</integer>
+    <dimen name="menubar_height">23px</dimen>
 </resources>

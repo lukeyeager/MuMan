@@ -27,10 +27,11 @@ import android.os.Message;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.muman.android.GameActivity;
+import com.muman.android.PopupActivity;
 import com.muman.android.R;
 
 /**
@@ -54,7 +55,6 @@ public class GameView extends FrameLayout {
 	public LevelView mLevelView;
 	private TextView mStatusBarLevel;
 	private TextView mStatusBarMoves;
-	private PopupView mPopupView;
 
 	/**
 	 * Create a simple handler that we can use to cause animation to happen. We
@@ -93,6 +93,8 @@ public class GameView extends FrameLayout {
 	};
 
 	private RefreshHandler mRedrawHandler = new RefreshHandler();
+
+	private GameActivity mActivity;
 	
 	public void update() {
 		if (mLevelView == null | mLevelView.mLevel == null) {
@@ -112,11 +114,11 @@ public class GameView extends FrameLayout {
 		    break;
 		case WIN:
 			mState = State.PAUSED;
-			mPopupView.createWinGamePopup();
+			createPopup(PopupActivity.REQUEST_WIN);
 			break;
 		case LOSE:
 			mState = State.PAUSED;
-			mPopupView.createLoseGamePopup();
+			createPopup(PopupActivity.REQUEST_LOSE);
 			break;
 		default:
 			break;
@@ -136,10 +138,13 @@ public class GameView extends FrameLayout {
 	
 	/**
 	 * Loads all children Views for this view
+	 * @param activity 
 	 * @return true on success
 	 */
-	public boolean loadChildren() {
+	public boolean loadChildren(GameActivity activity) {
 		try {
+			mActivity = activity;
+			
 			mLevelView = (LevelView) findViewById(R.id.levelview);
 			if (mLevelView == null)
 				return false;
@@ -151,18 +156,6 @@ public class GameView extends FrameLayout {
 			mStatusBarMoves = (TextView) findViewById(R.id.statusbar_moves);
 			if (mStatusBarMoves == null)
 				return false;
-			
-			findViewById(R.id.restart_icon).setOnClickListener(
-					new OnClickListener() {
-
-						@Override
-						public void onClick(View arg0) {
-							GameView.this.loadLevel(mLevelView.mLevel.id);
-						}
-					}
-				);
-			
-			mPopupView = (PopupView) findViewById(R.id.popup);
 		} catch (Exception e) {
 			return false;
 		}
@@ -176,8 +169,22 @@ public class GameView extends FrameLayout {
 	public void loadLevel(String levelId) {
 		mLevelView.loadLevel(levelId);
 		mState = State.RUNNING;
-		mPopupView.setVisibility(INVISIBLE);
 		mRedrawHandler.sleep(0);
+	}
+	
+	/**
+	 * Reloads the current level
+	 */
+	public void reloadLevel() {
+		loadLevel(mLevelView.mLevel.id);
+	}
+	
+	/**
+	 * Creates a PopupActivity
+	 * @param type The type of popup to create
+	 */
+	private void createPopup(int type) {
+		mActivity.createPopup(type);
 	}
 
 	/**

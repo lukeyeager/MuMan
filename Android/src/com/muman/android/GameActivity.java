@@ -21,6 +21,7 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 package com.muman.android;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
@@ -61,7 +62,7 @@ public class GameActivity extends Activity {
 			finish();
 		} else {
 			mGameView = (GameView) findViewById(R.id.gameview);
-			mGameView.loadChildren();
+			mGameView.loadChildren(this);
 			mGameView.loadLevel(levelId);
 		}
 	}
@@ -87,12 +88,56 @@ public class GameActivity extends Activity {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 	}
+	
+	public void createPopup(int type) {
+		Intent i = new Intent(this, PopupActivity.class);
+		i.putExtra(PopupActivity.TYPE, type);
+		startActivityForResult(i, type);
+	}
 
 	@Override
 	public void onBackPressed() {
-		// TODO: Create a pause screen here
-		super.onBackPressed();
+		
+		setResult(-1);
+		finish();
+		if (true)
+			return;
+		
+		if (mGameView != null) {
+			Intent i = new Intent(this, PopupActivity.class);
+			i.putExtra(PopupActivity.TYPE, PopupActivity.REQUEST_PAUSE);
+			startActivityForResult(i, PopupActivity.REQUEST_PAUSE);
+		} else { 
+			super.onBackPressed();
+		}
 	}
-	
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		
+		switch (requestCode) {
+		case PopupActivity.REQUEST_PAUSE:
+		case PopupActivity.REQUEST_WIN:
+		case PopupActivity.REQUEST_LOSE:
+		default:
+			break;
+		}
+		
+		switch (resultCode) {
+		case PopupActivity.RESULT_ERROR:
+			setResult(-1);
+			finish();
+			break;
+		case PopupActivity.RESULT_EXIT:
+			finish();
+			break;
+		case PopupActivity.RESULT_RELOAD:
+			mGameView.reloadLevel();
+			break;
+		default:
+			break;
+		}
+		
+	}
 	
 }

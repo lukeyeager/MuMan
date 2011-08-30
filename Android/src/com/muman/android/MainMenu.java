@@ -48,7 +48,7 @@ public class MainMenu extends Activity {
 					@Override
 					public void onClick(View arg0) {
 						Intent i = new Intent(MainMenu.this, GameActivity.class);
-						i.putExtra(GameActivity.LEVEL, "1_1");
+						i.putExtra(GameActivity.LEVEL, "1_2");
 						startActivityForResult(i, 0);
 					}
 					
