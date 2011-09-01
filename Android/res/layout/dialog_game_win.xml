@@ -20,8 +20,8 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  -->
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		android:layout_width="@dimen/popup_width"
-		android:layout_height="@dimen/popup_height"
+		android:layout_width="@dimen/game_dialog_width"
+		android:layout_height="@dimen/game_dialog_height"
 		android:layout_centerInParent="true"
 		android:background="@drawable/black"
 		android:visibility="visible"
@@ -30,7 +30,7 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:text="@string/popup_pause"
+			android:text="@string/popup_win"
 			android:layout_alignParentTop="true"
 			android:layout_centerHorizontal="true"
 			android:layout_margin="10px"
@@ -40,10 +40,10 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 		android:id="@+id/popup_restart"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:src="@drawable/restart_icon"
+			android:src="@drawable/dialog_restart"
 			android:scaleType="centerCrop"
 			android:layout_alignParentBottom="true"
 		/>
-		
+
 </RelativeLayout>
 		

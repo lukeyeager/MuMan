@@ -41,28 +41,14 @@ public class MainMenu extends Activity {
 		super.onCreate(savedInstanceState);
 		
 		setContentView(R.layout.main_menu);
-		
+
 		((TextView) findViewById(R.id.mainmenu_start)).setOnClickListener(
 				new OnClickListener() {
 
 					@Override
 					public void onClick(View arg0) {
 						Intent i = new Intent(MainMenu.this, LevelPackSelectActivity.class);
-						//i.putExtra(GameActivity.LEVEL, "1_3");
 						startActivity(i);
-					}
-					
-				}
-		);
-		
-		((TextView) findViewById(R.id.mainmenu_popup)).setOnClickListener(
-				new OnClickListener() {
-
-					@Override
-					public void onClick(View arg0) {
-						Intent i = new Intent(MainMenu.this, PopupActivity.class);
-						i.putExtra(PopupActivity.TYPE, PopupActivity.REQUEST_PAUSE);
-						startActivityForResult(i, 0);
 					}
 					
 				}
@@ -73,7 +59,7 @@ public class MainMenu extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						finish();
+						MainMenu.this.finish();
 					}
 					
 				}

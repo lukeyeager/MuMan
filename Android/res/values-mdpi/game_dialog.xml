@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
@@ -16,17 +16,10 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
--->
-
-<Level id="1_2"
-	width="15"
-	height="9" >
-	
-	<Player x="2" y="4" />
-	<Components>
-		<Wall x="12" y="4" />
-		<Spiker x="2" y="2" />
-		<Goal x="11" y="7" />
-	</Components>
-</Level>
+along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>. 
+ -->
+ 
+<resources>
+    <dimen name="game_dialog_width">300px</dimen>
+    <dimen name="game_dialog_height">200px</dimen>
+</resources>

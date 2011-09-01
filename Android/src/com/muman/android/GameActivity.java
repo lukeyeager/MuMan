@@ -21,7 +21,10 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 package com.muman.android;
 
 import android.app.Activity;
-import android.content.Intent;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 
@@ -36,6 +39,10 @@ import com.muman.android.views.GameView;
 public class GameActivity extends Activity {
 
 	public static final String LEVEL = "level";
+
+	public static final int DIALOG_PAUSE = 1;
+	public static final int DIALOG_WIN = 2;
+	public static final int DIALOG_LOSE = 3;
 	
 	private GameView mGameView;
 	private GameView.State savedState = null;
@@ -88,57 +95,89 @@ public class GameActivity extends Activity {
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
 	}
+
+	@Override
+	protected Dialog onCreateDialog(int id) {
+		
+		switch (id) {
+		case DIALOG_WIN:
+			return createDialogWin();
+		case DIALOG_LOSE:
+			return createDialogLose();
+		case DIALOG_PAUSE:
+			return createDialogPause();
+		default:
+			return null;
+		}
+	}
 	
-	public void createPopup(int type) {
-		Intent i = new Intent(this, PopupActivity.class);
-		i.putExtra(PopupActivity.TYPE, type);
-		startActivityForResult(i, 0);
+	/**
+	 * Creates a Win dialog
+	 * @return
+	 */
+	private Dialog createDialogWin() {
+		AlertDialog.Builder builder;
+		
+		builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure you want to win?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                GameActivity.this.finish();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		return builder.create();
+	}
+			
+	/**
+	 * Creates a Lose dialog
+	 * @return
+	 */
+	private Dialog createDialogLose() {
+		AlertDialog.Builder builder;
+		builder = new AlertDialog.Builder(this);
+		builder.setMessage("Are you sure you want to win?")
+		       .setCancelable(false)
+		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                GameActivity.this.finish();
+		           }
+		       })
+		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
+		           public void onClick(DialogInterface dialog, int id) {
+		                dialog.cancel();
+		           }
+		       });
+		return builder.create();
+	}
+	
+	/**
+	 * Creates a Pause dialog
+	 * @return
+	 */
+	private Dialog createDialogPause() {
+		Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.dialog_game_pause);
+		dialog.setTitle("Game Paused");
+		dialog.setOnCancelListener(
+				new OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						dialog.dismiss();
+						GameActivity.this.finish();
+					}
+					
+				});
+		return dialog;
 	}
 
 	@Override
 	public void onBackPressed() {
-		
-		setResult(-1);
-		finish();
-		if (true)
-			return;
-		
-		if (mGameView != null) {
-			Intent i = new Intent(this, PopupActivity.class);
-			i.putExtra(PopupActivity.TYPE, PopupActivity.REQUEST_PAUSE);
-			startActivityForResult(i, PopupActivity.REQUEST_PAUSE);
-		} else { 
-			super.onBackPressed();
-		}
+		showDialog(DIALOG_PAUSE);
 	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		switch (requestCode) {
-		case PopupActivity.REQUEST_PAUSE:
-		case PopupActivity.REQUEST_WIN:
-		case PopupActivity.REQUEST_LOSE:
-		default:
-			break;
-		}
-		
-		switch (resultCode) {
-		case PopupActivity.RESULT_EXIT:
-			setResult(0);
-			finish();
-			break;
-		case PopupActivity.RESULT_RELOAD:
-			mGameView.reloadLevel();
-			break;
-		case PopupActivity.RESULT_ERROR:
-		default:
-			setResult(-1);
-			finish();
-			break;
-		}
-		
-	}
-	
 }

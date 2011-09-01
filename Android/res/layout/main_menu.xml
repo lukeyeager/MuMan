@@ -62,16 +62,6 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 					android:gravity="center"
 					android:text="@string/mainmenu_start"
 				/>
-				
-			<TextView
-				android:id="@+id/mainmenu_popup"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:padding="10px"
-					android:textSize="16sp"
-					android:gravity="center"
-					android:text="Make me a popup!"
-				/>
 			
 			<TextView
 				android:id="@+id/mainmenu_exit"

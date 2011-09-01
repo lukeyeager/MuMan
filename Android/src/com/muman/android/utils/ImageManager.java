@@ -20,11 +20,13 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.utils;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+
 import android.content.Context;
-import android.content.res.Resources;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
+import android.graphics.BitmapFactory;
 
 import com.muman.android.R;
 
@@ -45,6 +47,9 @@ public class ImageManager {
     
     private Bitmap[] mImages;
     
+    private AssetManager mAssets;
+    private String screenSize;
+    
 	/**
 	 * Default Constructor
 	 * @param context
@@ -53,13 +58,17 @@ public class ImageManager {
     public ImageManager(Context context, int tileSize) {
     	mTileSize = tileSize;
 
-    	Resources r = context.getResources();
+    	mAssets = context.getAssets();
+    	screenSize = context.getResources().getString(R.string.screen_size);
+    	
     	mImages = new Bitmap[5];
-    	loadImage(IMAGE_BLANK, r.getDrawable(R.drawable.blank_tile));
-    	loadImage(IMAGE_PLAYER, r.getDrawable(R.drawable.player));
-    	loadImage(IMAGE_WALL, r.getDrawable(R.drawable.wall));
-    	loadImage(IMAGE_GOAL, r.getDrawable(R.drawable.goal));
-    	loadImage(IMAGE_SPIKER, r.getDrawable(R.drawable.spiker));
+    	loadImage(IMAGE_BLANK, "blank_tile");
+    	loadImage(IMAGE_PLAYER, "player");
+    	loadImage(IMAGE_WALL, "wall");
+    	loadImage(IMAGE_GOAL, "goal");
+    	loadImage(IMAGE_SPIKER, "spiker");
+    	
+    	mAssets = null;
     }
     
 	/**
@@ -69,14 +78,18 @@ public class ImageManager {
 	 * @param key
 	 * @param tile
 	 */
-	private void loadImage(int key, Drawable tile) {
-		Bitmap bitmap = Bitmap.createBitmap(mTileSize, mTileSize,
-				Bitmap.Config.ARGB_8888);
-		Canvas canvas = new Canvas(bitmap);
-		tile.setBounds(0, 0, mTileSize, mTileSize);
-		tile.draw(canvas);
-
-		mImages[key] = bitmap;
+	private void loadImage(int key, String fileName) {
+		String filePath = "Images/" + screenSize + "/" + fileName + ".png";
+		
+		BufferedInputStream buf;
+		try {
+			buf = new BufferedInputStream(mAssets.open(filePath));
+			Bitmap bitmap = BitmapFactory.decodeStream(buf);
+			mImages[key] = bitmap;
+			buf.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
     
     /**

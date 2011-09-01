@@ -31,7 +31,6 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.muman.android.GameActivity;
-import com.muman.android.PopupActivity;
 import com.muman.android.R;
 
 /**
@@ -114,11 +113,11 @@ public class GameView extends FrameLayout {
 		    break;
 		case WIN:
 			mState = State.PAUSED;
-			createPopup(PopupActivity.REQUEST_WIN);
+			createDialog(GameActivity.DIALOG_WIN);
 			break;
 		case LOSE:
 			mState = State.PAUSED;
-			createPopup(PopupActivity.REQUEST_LOSE);
+			createDialog(GameActivity.DIALOG_LOSE);
 			break;
 		default:
 			break;
@@ -180,11 +179,11 @@ public class GameView extends FrameLayout {
 	}
 	
 	/**
-	 * Creates a PopupActivity
-	 * @param type The type of popup to create
+	 * Creates popup dialog
+	 * @param type The type of dialog to create
 	 */
-	private void createPopup(int type) {
-		mActivity.createPopup(type);
+	private void createDialog(int type) {
+		mActivity.showDialog(type);
 	}
 
 	/**
@@ -199,6 +198,8 @@ public class GameView extends FrameLayout {
 
 		return super.onKeyDown(keyCode, msg);
 	}
+	
+	
 
 	/**
 	 * Passes all TouchEvents to processTouchEvent, including historical touches
