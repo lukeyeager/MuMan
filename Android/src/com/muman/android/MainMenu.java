@@ -47,8 +47,21 @@ public class MainMenu extends Activity {
 
 					@Override
 					public void onClick(View arg0) {
-						Intent i = new Intent(MainMenu.this, GameActivity.class);
-						i.putExtra(GameActivity.LEVEL, "1_2");
+						Intent i = new Intent(MainMenu.this, LevelPackSelectActivity.class);
+						//i.putExtra(GameActivity.LEVEL, "1_3");
+						startActivity(i);
+					}
+					
+				}
+		);
+		
+		((TextView) findViewById(R.id.mainmenu_popup)).setOnClickListener(
+				new OnClickListener() {
+
+					@Override
+					public void onClick(View arg0) {
+						Intent i = new Intent(MainMenu.this, PopupActivity.class);
+						i.putExtra(PopupActivity.TYPE, PopupActivity.REQUEST_PAUSE);
 						startActivityForResult(i, 0);
 					}
 					
@@ -71,7 +84,7 @@ public class MainMenu extends Activity {
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == -1) {
+		if (resultCode < 0) {
 			Toast.makeText(getApplicationContext(), "An error occurred.", Toast.LENGTH_SHORT).show();
 		}
 	}

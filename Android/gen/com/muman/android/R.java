@@ -32,9 +32,10 @@ public final class R {
     public static final class id {
         public static final int gameview=0x7f070000;
         public static final int levelview=0x7f070001;
-        public static final int mainmenu_exit=0x7f070005;
+        public static final int mainmenu_exit=0x7f070006;
+        public static final int mainmenu_popup=0x7f070005;
         public static final int mainmenu_start=0x7f070004;
-        public static final int popup_restart=0x7f070006;
+        public static final int popup_restart=0x7f070007;
         public static final int statusbar_level=0x7f070002;
         public static final int statusbar_moves=0x7f070003;
     }
@@ -44,11 +45,13 @@ public final class R {
     }
     public static final class layout {
         public static final int game=0x7f030000;
-        public static final int list_item=0x7f030001;
-        public static final int main_menu=0x7f030002;
-        public static final int popup_lose=0x7f030003;
-        public static final int popup_pause=0x7f030004;
-        public static final int popup_win=0x7f030005;
+        public static final int level_pack_select=0x7f030001;
+        public static final int level_select=0x7f030002;
+        public static final int list_item=0x7f030003;
+        public static final int main_menu=0x7f030004;
+        public static final int popup_lose=0x7f030005;
+        public static final int popup_pause=0x7f030006;
+        public static final int popup_win=0x7f030007;
     }
     public static final class string {
         public static final int app_name=0x7f040001;
@@ -61,5 +64,6 @@ public final class R {
         public static final int screen_size=0x7f040000;
         public static final int statusbar_level=0x7f040004;
         public static final int statusbar_moves=0x7f040005;
+        public static final int version=0x7f04000a;
     }
 }

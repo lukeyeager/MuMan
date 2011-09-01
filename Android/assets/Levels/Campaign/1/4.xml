@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Copyright 2011 Luke Yeager and Sam Bryan
+$Id$
+
+This file is part of MuMan.
+
+MuMan is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+MuMan is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
+-->
+
+<Level id="1_4"
+	width="15"
+	height="9" >
+	
+	<Player x="3" y="5" />
+	
+	<Components>
+		<Wall x="1" y="4" />
+		<Wall x="1" y="5" />
+		<Wall x="2" y="1" />
+		<Wall x="2" y="8" />
+		<Wall x="3" y="1" />
+		<Wall x="3" y="9" />
+		<Wall x="4" y="6" />
+		<Wall x="5" y="3" />
+		<Wall x="9" y="2" />
+		<Wall x="9" y="8" />
+		<Wall x="10" y="4" />
+		<Wall x="11" y="9" />
+		<Wall x="12" y="1" />
+		<Wall x="12" y="7" />
+		<Wall x="13" y="3" />
+		<Wall x="14" y="7" />
+		<Wall x="14" y="8" />
+		<Wall x="15" y="4" />
+		<Goal x="10" y="1" />
+	</Components>
+</Level>

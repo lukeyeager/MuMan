@@ -31,59 +31,26 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 		android:scaleType="center"
 		/>
 	
-	<RelativeLayout
+	<LinearLayout
 			android:layout_width="@dimen/screen_width"
 			android:layout_height="@dimen/screen_height"
 			android:layout_gravity="center"
 			android:background="@drawable/black"
 		>
 		
-		<LinearLayout
-			    android:orientation="vertical"
-			    android:layout_width="fill_parent"
-			    android:layout_height="fill_parent"
-			>
+		<ListView
+			android:id="@+id/android:list"
+				android:layout_height="wrap_content"
+				android:layout_width="fill_parent" 
+			/>
+		
+		<TextView
+			android:id="@+id/android:empty"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:text="None"
+			/>
 			
-			<TextView
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:textStyle="bold"
-					android:textSize="50sp"
-					android:gravity="center"
-					android:text="@string/app_name"
-				/>
-			
-			<TextView
-				android:id="@+id/mainmenu_start"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:padding="10px"
-					android:textSize="16sp"
-					android:gravity="center"
-					android:text="@string/mainmenu_start"
-				/>
-				
-			<TextView
-				android:id="@+id/mainmenu_popup"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:padding="10px"
-					android:textSize="16sp"
-					android:gravity="center"
-					android:text="Make me a popup!"
-				/>
-			
-			<TextView
-				android:id="@+id/mainmenu_exit"
-					android:layout_width="fill_parent"
-					android:layout_height="wrap_content"
-					android:padding="10px"
-					android:textSize="16sp"
-					android:gravity="center"
-					android:text="@string/mainmenu_exit"
-				/>
-				
-		</LinearLayout>
-			
-	</RelativeLayout>
+	</LinearLayout>
+		
 </FrameLayout>

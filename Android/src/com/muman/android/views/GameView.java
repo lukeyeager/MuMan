@@ -164,10 +164,10 @@ public class GameView extends FrameLayout {
 
 	/**
 	 * Forces mLevelView to load a new level
-	 * @param levelId
+	 * @param levelPath
 	 */
-	public void loadLevel(String levelId) {
-		mLevelView.loadLevel(levelId);
+	public void loadLevel(String levelPath) {
+		mLevelView.loadLevel(levelPath);
 		mState = State.RUNNING;
 		mRedrawHandler.sleep(0);
 	}

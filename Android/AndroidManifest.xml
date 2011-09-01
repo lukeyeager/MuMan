@@ -21,7 +21,7 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 	package="com.muman.android"
-	android:versionCode="1" android:versionName="0.1">
+	android:versionCode="1" android:versionName="@string/version">
 	
 	<uses-sdk android:minSdkVersion="8" />
 
@@ -39,6 +39,17 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 			</intent-filter>
 		</activity>
 		
+		<activity
+			android:name=".LevelPackSelectActivity"
+				android:screenOrientation="landscape"
+				android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+			/>
+		
+		<activity
+			android:name=".LevelSelectActivity"
+				android:screenOrientation="landscape"
+				android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen"
+			/>
 		<activity
 			android:name=".GameActivity"
 				android:screenOrientation="landscape"

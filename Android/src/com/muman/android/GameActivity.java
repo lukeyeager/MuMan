@@ -51,19 +51,19 @@ public class GameActivity extends Activity {
 		setContentView(R.layout.game);
 
 		// Try loading levelId from savedInstanceState
-		String levelId = (savedInstanceState == null) ? null : savedInstanceState.getString(LEVEL);
-		if (levelId == null) {
+		String levelPath = (savedInstanceState == null) ? null : savedInstanceState.getString(LEVEL);
+		if (levelPath == null) {
 			// Otherwise, try loading levelId from the Intent
 			Bundle extras = getIntent().getExtras();
-			levelId = (extras != null) ? extras.getString(LEVEL) : null;
+			levelPath = (extras != null) ? extras.getString(LEVEL) : null;
 		}
-		if (levelId == null) {
+		if (levelPath == null) {
 			setResult(-1);
 			finish();
 		} else {
 			mGameView = (GameView) findViewById(R.id.gameview);
 			mGameView.loadChildren(this);
-			mGameView.loadLevel(levelId);
+			mGameView.loadLevel(levelPath);
 		}
 	}
 	
@@ -92,7 +92,7 @@ public class GameActivity extends Activity {
 	public void createPopup(int type) {
 		Intent i = new Intent(this, PopupActivity.class);
 		i.putExtra(PopupActivity.TYPE, type);
-		startActivityForResult(i, type);
+		startActivityForResult(i, 0);
 	}
 
 	@Override
@@ -114,6 +114,7 @@ public class GameActivity extends Activity {
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
 		
 		switch (requestCode) {
 		case PopupActivity.REQUEST_PAUSE:
@@ -124,17 +125,17 @@ public class GameActivity extends Activity {
 		}
 		
 		switch (resultCode) {
-		case PopupActivity.RESULT_ERROR:
-			setResult(-1);
-			finish();
-			break;
 		case PopupActivity.RESULT_EXIT:
+			setResult(0);
 			finish();
 			break;
 		case PopupActivity.RESULT_RELOAD:
 			mGameView.reloadLevel();
 			break;
+		case PopupActivity.RESULT_ERROR:
 		default:
+			setResult(-1);
+			finish();
 			break;
 		}
 		

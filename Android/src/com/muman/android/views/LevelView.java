@@ -80,11 +80,11 @@ public class LevelView extends View {
 	
 	/**
 	 * Loads a level from an XML file
-	 * @param levelId The name of the XML file under assets/Levels
+	 * @param levelPath The path to an XML file under assets/Levels
 	 */
-	public void loadLevel(String levelId) {
+	public void loadLevel(String levelPath) {
 		try {
-			mLevel = new Level(levelId);
+			mLevel = new Level(levelPath);
 			LevelXmlParser handler = new LevelXmlParser(mLevel);
 			XMLReader xr = XMLReaderFactory.createXMLReader();
 			
@@ -93,7 +93,7 @@ public class LevelView extends View {
 			
 			AssetManager assets = getContext().getAssets();
 			
-			xr.parse(new InputSource(assets.open("Levels/level_" + levelId + ".xml")));
+			xr.parse(new InputSource(assets.open("Levels/" + levelPath)));
 			
 			mState = State.RUNNING;
 			update();
