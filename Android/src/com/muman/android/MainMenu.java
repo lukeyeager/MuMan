@@ -23,6 +23,7 @@ package com.muman.android;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
@@ -42,37 +43,50 @@ public class MainMenu extends Activity {
 		
 		setContentView(R.layout.main_menu);
 
-		((TextView) findViewById(R.id.mainmenu_start)).setOnClickListener(
-				new OnClickListener() {
-
-					@Override
-					public void onClick(View arg0) {
-						Intent i = new Intent(MainMenu.this, LevelPackSelectActivity.class);
-						startActivity(i);
+		TextView startText = (TextView) findViewById(R.id.mainmenu_start);
+		if (startText != null) {
+			startText.setOnClickListener(
+					new OnClickListener() {
+	
+						@Override
+						public void onClick(View arg0) {
+							Intent i = new Intent(MainMenu.this, LevelPackSelectActivity.class);
+							startActivity(i);
+						}
 					}
-					
-				}
-		);
-		
-		((TextView) findViewById(R.id.mainmenu_exit)).setOnClickListener(
-				new OnClickListener() {
-
-					@Override
-					public void onClick(View arg0) {
-						MainMenu.this.finish();
-					}
-					
-				}
-		);
-		
-	}
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode < 0) {
-			Toast.makeText(getApplicationContext(), "An error occurred.", Toast.LENGTH_SHORT).show();
+				);
 		}
+
+		TextView metrics = (TextView) findViewById(R.id.mainmenu_metrics);
+		if (metrics != null) {
+			metrics.setOnClickListener(
+					new OnClickListener() {
+	
+						@Override
+						public void onClick(View arg0) {
+							DisplayMetrics metrics = MainMenu.this.getResources().getDisplayMetrics();
+							String text = metrics.widthPixels + "x" + metrics.heightPixels + ", DPI: " + metrics.densityDpi;
+							Toast.makeText(MainMenu.this, text, Toast.LENGTH_SHORT).show();
+						}
+						
+					}
+			);
+		}
+		
+		TextView exitText = (TextView) findViewById(R.id.mainmenu_exit);
+		if (exitText != null) {
+			exitText.setOnClickListener(
+					new OnClickListener() {
+	
+						@Override
+						public void onClick(View arg0) {
+							MainMenu.this.finish();
+						}
+						
+					}
+			);
+		}
+		
 	}
 
 }

@@ -43,8 +43,6 @@ public class ImageManager {
     public static final int IMAGE_GOAL = 3;
     public static final int IMAGE_SPIKER = 4;
     
-    private Integer mTileSize;
-    
     private Bitmap[] mImages;
     
     private AssetManager mAssets;
@@ -55,9 +53,7 @@ public class ImageManager {
 	 * @param context
 	 * @param tileSize The size in pixels of each square tile
 	 */
-    public ImageManager(Context context, int tileSize) {
-    	mTileSize = tileSize;
-
+    public ImageManager(Context context) {
     	mAssets = context.getAssets();
     	screenSize = context.getResources().getString(R.string.screen_size);
     	

@@ -75,7 +75,7 @@ public class LevelView extends View {
 	
 		mTileSize = context.getResources().getInteger(R.integer.tile_size);
 		mBorderSize = context.getResources().getInteger(R.integer.border_width);
-		mImageManager = new ImageManager(getContext(), mTileSize);
+		mImageManager = new ImageManager(context);
     }
 	
 	/**

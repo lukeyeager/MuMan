@@ -21,12 +21,15 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 package com.muman.android;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.muman.android.views.GameView;
 
@@ -98,14 +101,16 @@ public class GameActivity extends Activity {
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
+		Dialog dialog = new Dialog(this);
+		dialog.setContentView(R.layout.game_dialog);
 		
 		switch (id) {
 		case DIALOG_WIN:
-			return createDialogWin();
+			return createDialogWin(dialog);
 		case DIALOG_LOSE:
-			return createDialogLose();
+			return createDialogLose(dialog);
 		case DIALOG_PAUSE:
-			return createDialogPause();
+			return createDialogPause(dialog);
 		default:
 			return null;
 		}
@@ -113,57 +118,141 @@ public class GameActivity extends Activity {
 	
 	/**
 	 * Creates a Win dialog
+	 * @param dialog 
 	 * @return
 	 */
-	private Dialog createDialogWin() {
-		AlertDialog.Builder builder;
+	private Dialog createDialogWin(Dialog dialog) {
+		dialog.setTitle("You win!");
 		
-		builder = new AlertDialog.Builder(this);
-		builder.setMessage("Are you sure you want to win?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                GameActivity.this.finish();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
-		return builder.create();
+		// No text needs to be shown
+		TextView text = (TextView) dialog.findViewById(R.id.dialog_text);
+		if (text != null) {
+			text.setVisibility(View.VISIBLE);
+			text.setText("You must be the best person ever.");
+		}
+		
+		ImageView reload = (ImageView) dialog.findViewById(R.id.dialog_reload);
+		if (reload != null) {
+			reload.setOnClickListener(
+					new OnClickListener() {
+						@Override
+						public void onClick(View arg0) {
+							GameActivity.this.dismissDialog(DIALOG_WIN);
+							GameActivity.this.mGameView.reloadLevel();
+						}
+					});
+		}
+		
+		ImageView menu = (ImageView) dialog.findViewById(R.id.dialog_menu);
+		if (menu != null) {
+			menu.setOnClickListener(
+					new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							GameActivity.this.finish();
+						}
+					});
+		}
+		
+		dialog.setOnCancelListener(
+				new OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						dialog.dismiss();
+						GameActivity.this.finish();
+					}
+					
+				});
+		return dialog;
 	}
 			
 	/**
 	 * Creates a Lose dialog
+	 * @param dialog 
 	 * @return
 	 */
-	private Dialog createDialogLose() {
-		AlertDialog.Builder builder;
-		builder = new AlertDialog.Builder(this);
-		builder.setMessage("Are you sure you want to win?")
-		       .setCancelable(false)
-		       .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                GameActivity.this.finish();
-		           }
-		       })
-		       .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		           public void onClick(DialogInterface dialog, int id) {
-		                dialog.cancel();
-		           }
-		       });
-		return builder.create();
+	private Dialog createDialogLose(Dialog dialog) {
+		dialog.setTitle("You Lost!");
+		
+		// No text needs to be shown
+		TextView text = (TextView) dialog.findViewById(R.id.dialog_text);
+		if (text != null) {
+			text.setVisibility(View.VISIBLE);
+			text.setText("You must be the worst person ever.");
+		}
+		
+		ImageView reload = (ImageView) dialog.findViewById(R.id.dialog_reload);
+		if (reload != null) {
+			reload.setOnClickListener(
+					new OnClickListener() {
+						@Override
+						public void onClick(View arg0) {
+							GameActivity.this.dismissDialog(DIALOG_LOSE);
+							GameActivity.this.mGameView.reloadLevel();
+						}
+					});
+		}
+		
+		ImageView menu = (ImageView) dialog.findViewById(R.id.dialog_menu);
+		if (menu != null) {
+			menu.setOnClickListener(
+					new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							GameActivity.this.finish();
+						}
+					});
+		}
+		
+		dialog.setOnCancelListener(
+				new OnCancelListener() {
+					@Override
+					public void onCancel(DialogInterface dialog) {
+						dialog.dismiss();
+						GameActivity.this.finish();
+					}
+					
+				});
+		return dialog;
 	}
 	
 	/**
 	 * Creates a Pause dialog
+	 * @param dialog 
 	 * @return
 	 */
-	private Dialog createDialogPause() {
-		Dialog dialog = new Dialog(this);
-		dialog.setContentView(R.layout.dialog_game_pause);
+	private Dialog createDialogPause(Dialog dialog) {
 		dialog.setTitle("Game Paused");
+		
+		// No text needs to be shown
+		TextView text = (TextView) dialog.findViewById(R.id.dialog_text);
+		if (text != null) {
+			text.setVisibility(View.INVISIBLE);
+		}
+		
+		ImageView reload = (ImageView) dialog.findViewById(R.id.dialog_reload);
+		if (reload != null) {
+			reload.setOnClickListener(
+					new OnClickListener() {
+						@Override
+						public void onClick(View arg0) {
+							GameActivity.this.dismissDialog(DIALOG_PAUSE);
+							GameActivity.this.mGameView.reloadLevel();
+						}
+					});
+		}
+		
+		ImageView menu = (ImageView) dialog.findViewById(R.id.dialog_menu);
+		if (menu != null) {
+			menu.setOnClickListener(
+					new OnClickListener() {
+						@Override
+						public void onClick(View v) {
+							GameActivity.this.finish();
+						}
+					});
+		}
+		
 		dialog.setOnCancelListener(
 				new OnCancelListener() {
 					@Override

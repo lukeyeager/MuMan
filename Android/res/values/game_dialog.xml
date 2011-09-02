@@ -20,6 +20,6 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
  -->
  
 <resources>
-    <dimen name="game_dialog_width">300px</dimen>
-    <dimen name="game_dialog_height">200px</dimen>
+    <dimen name="game_dialog_width">300dp</dimen>
+    <dimen name="game_dialog_height">200dp</dimen>
 </resources>
