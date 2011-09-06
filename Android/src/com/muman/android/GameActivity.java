@@ -24,6 +24,7 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
 import android.view.View;
@@ -49,6 +50,8 @@ public class GameActivity extends Activity {
 	
 	private GameView mGameView;
 	private GameView.State savedState = null;
+	
+	public MediaPlayer mediaPlayer = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +78,10 @@ public class GameActivity extends Activity {
 			mGameView.loadChildren(this);
 			mGameView.loadLevel(levelPath);
 		}
+		
+		mediaPlayer = MediaPlayer.create(this, R.raw.music_game);
+		mediaPlayer.start();
+		mediaPlayer.setLooping(true);
 	}
 	
     @Override
@@ -97,6 +104,14 @@ public class GameActivity extends Activity {
 		
 		DisplayMetrics metrics = new DisplayMetrics();
 		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+	}
+
+	@Override
+	protected void onStop() {
+		super.onStop();
+		mediaPlayer.stop();
+		mediaPlayer.release();
+		mediaPlayer = null;
 	}
 
 	@Override
