@@ -23,31 +23,66 @@ package com.muman.android.components;
 import com.muman.android.utils.ImageManager;
 
 /**
- * One of the basic components. A Wall simply blocks movement.
+ * This is the first component of a laser beam. The beam continues in LaserBeam components
  * @author Luke
  *
  */
-public class Wall extends Component {
+public class LaserSource extends Component {
+
+	/**
+	 * An Enum for storing the direction in which this laser extends
+	 * @author Luke
+	 *
+	 */
+	public static enum Direction {
+		UP, DOWN, RIGHT, LEFT
+	}
+	
+	/**
+	 * The direction of this laser
+	 */
+	private Direction mDirection;
+	
+	/**
+	 * Getter for mDirection
+	 * @return
+	 */
+	public Direction getDirection() { return mDirection; }
+	
+	/**
+	 * Default constructor
+	 * @param direction The direction for this laser
+	 */
+	public LaserSource(Direction direction) {
+		mDirection = direction;
+	}
 
 	@Override
 	public boolean onCollision(Player player) {
-		player.stop();
+		player.die();
 		return true;
 	}
 
 	@Override
 	public int getImage() {
-		return ImageManager.IMAGE_WALL;
+		return ImageManager.IMAGE_LASER_SOURCE;
 	}
 
 	@Override
 	public boolean stopsLaser() {
-		return true;
+		return false;
+	}
+
+	/**
+	 * Turns off a laser (must also remove all LaserBeams generated from this source).
+	 */
+	public void turnOff() {
+		//TODO: remove LaserBeams
 	}
 
 	@Override
 	public Integer getDrawWeight() {
-		return 90;
+		return 30;
 	}
 
 }

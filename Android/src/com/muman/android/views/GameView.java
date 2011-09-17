@@ -100,7 +100,7 @@ public class GameView extends FrameLayout {
 			return;
 		}
 		
-		switch (mLevelView.mLevel.mState) {
+		switch (mLevelView.mLevel.getState()) {
 		case RUNNING:
 			mLevelView.update();
 			mLevelView.invalidate();

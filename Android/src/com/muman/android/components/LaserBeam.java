@@ -20,34 +20,55 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.components;
 
+import com.muman.android.components.LaserSource.Direction;
 import com.muman.android.utils.ImageManager;
 
 /**
- * One of the basic components. A Wall simply blocks movement.
+ * An extension from a LaserSource, this continues the beam across the screen until it hits another component or the edge of the screen.
  * @author Luke
  *
  */
-public class Wall extends Component {
+public class LaserBeam extends Component {
+
+	/**
+	 * The direction of this beam
+	 */
+	private Direction mDirection;
+	
+	/**
+	 * Getter for mDirection
+	 * @return
+	 */
+	public Direction getDirection() { return mDirection; }
+	
+	/**
+	 * Default constructor
+	 * @param direction
+	 */
+	public LaserBeam(Direction direction) {
+		mDirection = direction;
+	}
 
 	@Override
 	public boolean onCollision(Player player) {
-		player.stop();
+		player.die();
 		return true;
 	}
 
 	@Override
 	public int getImage() {
-		return ImageManager.IMAGE_WALL;
+		//TODO: return different images depending on direction
+		return ImageManager.IMAGE_LASER_BEAM;
 	}
 
 	@Override
 	public boolean stopsLaser() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public Integer getDrawWeight() {
-		return 90;
+		return 31;
 	}
 
 }

@@ -62,6 +62,25 @@ public class Player {
 	public Movement movement;
 	
 	/**
+	 * Enum to denote the state of the Player.
+	 * @author Luke
+	 *
+	 */
+	public static enum State {
+		PLAYING, LOST, WON
+	}
+	
+	/**
+	 * The current State of the Player.
+	 */
+	private State mState = State.PLAYING;
+	
+	/**
+	 * Getter for mState. The Level uses this function to decide whether the game should end.
+	 */
+	public State getState() { return mState; }
+	
+	/**
 	 * Default constructor
 	 * @param newX Starting position
 	 * @param newY Starting position
@@ -98,6 +117,22 @@ public class Player {
 	 */
 	public void stop() {
 		movement = Movement.NONE;
+	}
+	
+	/**
+	 * Causes a Player to enter the WON state
+	 */
+	public void win() {
+		stop();
+		mState = State.WON;
+	}
+	
+	/**
+	 * Causes a Player to enter the LOST state
+	 */
+	public void die() {
+		stop();
+		mState = State.LOST;
 	}
 
 }

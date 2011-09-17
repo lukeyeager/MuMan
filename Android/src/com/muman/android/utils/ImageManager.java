@@ -42,6 +42,8 @@ public class ImageManager {
     public static final int IMAGE_WALL = 2;
     public static final int IMAGE_GOAL = 3;
     public static final int IMAGE_SPIKER = 4;
+    public static final int IMAGE_LASER_SOURCE = 5;
+    public static final int IMAGE_LASER_BEAM = 6;
     
     private Bitmap[] mImages;
     
@@ -57,12 +59,14 @@ public class ImageManager {
     	mAssets = context.getAssets();
     	screenSize = context.getResources().getString(R.string.screen_size);
     	
-    	mImages = new Bitmap[5];
+    	mImages = new Bitmap[20];
     	loadImage(IMAGE_BLANK, "blank_tile");
     	loadImage(IMAGE_PLAYER, "player");
     	loadImage(IMAGE_WALL, "wall");
     	loadImage(IMAGE_GOAL, "goal");
     	loadImage(IMAGE_SPIKER, "spiker");
+    	loadImage(IMAGE_LASER_SOURCE, "laser_source");
+    	loadImage(IMAGE_LASER_BEAM, "laser_beam");
     	
     	mAssets = null;
     }

@@ -25,16 +25,46 @@ package com.muman.android.components;
  * @author Luke
  *
  */
-public abstract class Component {
+public abstract class Component implements Comparable<Component> {
 	
 	/**
-	 * Each component should define what happens when it collides with a Player
+	 * Each component defines what happens when it collides with a Player
 	 * @param player
+	 * @return True if the player's motion stops
+	 * 			(So, no more components' onCollisions need to be processed at this location)
 	 */
-	public abstract void onCollision(Player player);
+	public abstract boolean onCollision(Player player);
 	
 	/**
-	 * Each component should define which image is drawn by ImageManager
+	 * Each component defines which image is drawn by ImageManager
 	 */
 	public abstract int getImage();
+
+	/**
+	 * Each component defines whether it stops a Laser beam 
+	 * @return
+	 */
+	public abstract boolean stopsLaser();
+	
+	/**
+	 * Each component defines its "weight" relative to other components so we can decide what order to draw them in
+	 * 
+	 * Wall			90	<br>
+	 * Spiker		80	<br>
+	 * Goal			61	<br>
+	 * LaserKey		60	<br>
+	 * Player		50	<br>
+	 * LaserBeam	31	<br>
+	 * LaserSource	30	<br>
+	 * 
+	 * @return Weight
+	 * 
+	 */
+	public abstract Integer getDrawWeight();
+
+	@Override
+	public int compareTo(Component another) {
+		return this.getDrawWeight().compareTo(another.getDrawWeight());
+	}
+	
 }

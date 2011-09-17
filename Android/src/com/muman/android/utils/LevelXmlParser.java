@@ -20,11 +20,20 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.utils;
 
+import java.util.ArrayList;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-import com.muman.android.components.*;
+import com.muman.android.components.Component;
+import com.muman.android.components.Goal;
+import com.muman.android.components.LaserBeam;
+import com.muman.android.components.LaserSource;
+import com.muman.android.components.Level;
+import com.muman.android.components.Player;
+import com.muman.android.components.Spiker;
+import com.muman.android.components.Wall;
 
 public class LevelXmlParser extends DefaultHandler {
 
@@ -41,11 +50,25 @@ public class LevelXmlParser extends DefaultHandler {
 	boolean parsedLevel = false;
 	boolean parsedPlayer = false;
 
+	/**
+	 * The Level into which the parsed data is being added
+	 */
 	private Level level;
-
+	
+	/**
+	 * A list of lasers which have been created. At the end of parsing, these must be extended from the
+	 * 		original LaserSource to include LaserBeams which extend until a solid surface is encountered.
+	 */
+	private ArrayList<Coordinate> lasers;
+	
+	/**
+	 * Default constructor
+	 * @param mLevel The Level into which the parsed data is being added
+	 */
 	public LevelXmlParser(Level mLevel) {
 		super();
 		level = mLevel;
+		lasers = new ArrayList<Coordinate>();
 	}
 
 	@Override
@@ -63,8 +86,10 @@ public class LevelXmlParser extends DefaultHandler {
 			parseWall(attributes);
 		} else if (localName.equals("Goal")) {
 			parseGoal(attributes);
-		}  else if (localName.equals("Spiker")) {
+		} else if (localName.equals("Spiker")) {
 			parseSpiker(attributes);
+		} else if (localName.equals("Laser")) {
+			parseLaser(attributes);
 		}
 	}
 
@@ -91,6 +116,7 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 	}
 
+	// XXX: This never gets executed?
 	@Override
 	public void endDocument() throws SAXException {
 
@@ -99,7 +125,9 @@ public class LevelXmlParser extends DefaultHandler {
 		} else if (!parsedPlayer) {
 			throw new SAXException("Never parsed <Player>");
 		}
-	}
+
+		extendLasers();
+	}	
 
 	/**
 	 * Called when a Level tag begins. This should be the rootNode of the XML
@@ -174,7 +202,7 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 
 		Coordinate c = parseAttrsForPosition(attrs);
-		level.components[c.x][c.y] = new Wall();
+		level.addComponent(c.x, c.y, new Wall());
 	}
 
 	/**
@@ -189,7 +217,7 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 
 		Coordinate c = parseAttrsForPosition(attrs);
-		level.components[c.x][c.y] = new Goal(level);
+		level.addComponent(c.x, c.y, new Goal());
 	}
 
 	/**
@@ -204,7 +232,47 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 
 		Coordinate c = parseAttrsForPosition(attrs);
-		level.components[c.x][c.y] = new Spiker(level);
+		level.addComponent(c.x, c.y, new Spiker());
+	}
+	
+	/**
+	 * Parse a Laser component
+	 * 
+	 * @param attrs
+	 * @throws SAXException
+	 */
+	private void parseLaser(Attributes attrs) throws SAXException {
+		if (!parsingComponents) {
+			throw new SAXException("<Laser> node must be within <Components>");
+		}
+
+		Coordinate c = parseAttrsForPosition(attrs);
+		
+		LaserSource.Direction dir = null;
+		int length = attrs.getLength();
+		for (int i = 0; i < length; i++) {
+			String name = attrs.getLocalName(i);
+			String value = attrs.getValue(i);
+			if (name.equals("Direction")) {
+				if (value.equalsIgnoreCase("UP")) {
+					dir = LaserSource.Direction.UP;
+				} else if (value.equalsIgnoreCase("DOWN")) {
+					dir = LaserSource.Direction.DOWN;
+				}  else if (value.equalsIgnoreCase("LEFT")) {
+					dir = LaserSource.Direction.LEFT;
+				}  else if (value.equalsIgnoreCase("RIGHT")) {
+					dir = LaserSource.Direction.RIGHT;
+				}
+				break;
+			}
+		}
+		
+		if (dir == null) {
+			throw new SAXException("You must specify a 'Direction' for a Laser (Up/Down/Left/Right)");
+		}
+
+		level.addComponent(c.x, c.y, new LaserSource(dir));
+		lasers.add(c);
 	}
 
 	/**
@@ -233,6 +301,80 @@ public class LevelXmlParser extends DefaultHandler {
 			throw new SAXException("Could not parse position from attrs");
 		} else {
 			return new Coordinate(x-1,y-1);
+		}
+	}
+	
+	/**
+	 * Called after XML file has been parsed, this function extends lasers beyond the LaserSource to include LaserBeams
+	 * @throws SAXException
+	 */
+	private void extendLasers() throws SAXException {
+		// Create Lasers
+		int numLasers = lasers.size();
+		for(int i=0; i<numLasers; i++) {
+			Coordinate c = lasers.get(i);
+			Component[] array = level.getComponents(c.x, c.y);
+			
+			// We'll just take the first one we encounter
+			//	XXX: This means you can't put two laser sources in the same location for now
+			LaserSource.Direction dir = null;
+			for (int j=0; j<array.length; j++) {
+				if (array[j].getClass() == LaserSource.class) {
+					dir = ((LaserSource) array[j]).getDirection();
+					break;
+				}
+			}
+			
+			// Update c
+			switch (dir) {
+			case UP:
+				c.y--;
+				break;
+			case DOWN:
+				c.y++;
+				break;
+			case LEFT:
+				c.x--;
+				break;
+			case RIGHT:
+				c.x++;
+				break;
+			default:
+				throw new SAXException("Somehow the LaserSource orientation got thrown off during parsing");
+			}
+			
+			while (c.x >= 0 && c.x < level.getWidth() && c.y >= 0 && c.y < level.getHeight()) {
+				
+				array = level.getComponents(c.x, c.y);
+				boolean drawHere = true;
+				for (int j=0; j<array.length; j++) {
+					if (array[j].stopsLaser()) {
+						drawHere = false;
+						break;
+					}
+				}
+				if (!drawHere)
+					break;
+				
+				level.addComponent(c.x, c.y, new LaserBeam(dir)); 
+				
+				// Update c
+				switch (dir) {
+				case UP:
+					c.y--;
+					break;
+				case DOWN:
+					c.y++;
+					break;
+				case LEFT:
+					c.x--;
+					break;
+				case RIGHT:
+					c.x++;
+					break;
+				default:
+				}
+			}
 		}
 	}
 

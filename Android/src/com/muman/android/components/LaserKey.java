@@ -20,34 +20,39 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.components;
 
-import com.muman.android.utils.ImageManager;
-
 /**
- * One of the basic components. A Wall simply blocks movement.
+ * This component turns off a laser beam when encountered.
  * @author Luke
  *
  */
-public class Wall extends Component {
+public class LaserKey extends Component {
+	
+	private LaserSource source;
+	
+	public LaserKey(LaserSource src) {
+		source = src;
+	}
 
 	@Override
 	public boolean onCollision(Player player) {
-		player.stop();
-		return true;
+		source.turnOff();
+		return false;
 	}
 
 	@Override
 	public int getImage() {
-		return ImageManager.IMAGE_WALL;
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 	@Override
 	public boolean stopsLaser() {
-		return true;
+		return false;
 	}
 
 	@Override
 	public Integer getDrawWeight() {
-		return 90;
+		return 60;
 	}
 
 }

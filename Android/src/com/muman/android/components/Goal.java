@@ -28,32 +28,29 @@ import com.muman.android.utils.ImageManager;
  *
  */
 public class Goal extends Component {
-
-	/**
-	 * The level that this Goal is a part of
-	 */
-	private Level level;
-	
-	/**
-	 * Default constructor
-	 * @param lvl The current level must be saved so that an end-of-game scenario can be triggered in onCollision()
-	 */
-	public Goal(Level lvl) {
-		level = lvl;
-	}
 	
 	/**
 	 * This collision triggers an end-of-game scenario
 	 */
 	@Override
-	public void onCollision(Player player) {
-		player.stop();
-		level.win();
+	public boolean onCollision(Player player) {
+		player.win();
+		return true;
 	}
 
 	@Override
 	public int getImage() {
 		return ImageManager.IMAGE_GOAL;
+	}
+
+	@Override
+	public boolean stopsLaser() {
+		return false;
+	}
+
+	@Override
+	public Integer getDrawWeight() {
+		return 61;
 	}
 
 }

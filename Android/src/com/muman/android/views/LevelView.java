@@ -32,8 +32,10 @@ import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Toast;
 
 import com.muman.android.R;
+import com.muman.android.components.Component;
 import com.muman.android.components.Level;
 import com.muman.android.utils.GameException;
 import com.muman.android.utils.ImageManager;
@@ -100,6 +102,7 @@ public class LevelView extends View {
 			
 		} catch (Exception e) {
 			e.printStackTrace();
+			Toast.makeText(getContext(), "An error occurred during LevelView.loadLevel: " + e.getMessage(), Toast.LENGTH_LONG).show();
 		}
 	}
 
@@ -231,12 +234,17 @@ public class LevelView extends View {
 				for (int y = 0; y < mLevel.getHeight(); y += 1) {
 					float screenX = x * mTileSize + mBorderSize;
 					float screenY = y * mTileSize + mBorderSize;
-					int image = ImageManager.IMAGE_BLANK;
-					if (mLevel.components[x][y] != null) {
-						image = mLevel.components[x][y].getImage();
+					Component[] array = mLevel.getComponents(x, y);
+					if (array == null | array.length == 0) {
+						canvas.drawBitmap(mImageManager.getImage(ImageManager.IMAGE_BLANK),
+								screenX, screenY, mPaint);
+					} else {
+						// Draw them in reverse draw order (lower components first)
+						for (int i = array.length-1; i>=0; i--) {
+							canvas.drawBitmap(mImageManager.getImage(array[i].getImage()),
+									screenX, screenY, mPaint);
+						}
 					}
-					canvas.drawBitmap(mImageManager.getImage(image), screenX,
-							screenY, mPaint);
 				}
 			}
 	

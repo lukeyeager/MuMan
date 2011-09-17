@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
 
@@ -16,38 +17,16 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
-*/
+-->
 
-package com.muman.android.components;
-
-import com.muman.android.utils.ImageManager;
-
-/**
- * One of the basic components. A Wall simply blocks movement.
- * @author Luke
- *
- */
-public class Wall extends Component {
-
-	@Override
-	public boolean onCollision(Player player) {
-		player.stop();
-		return true;
-	}
-
-	@Override
-	public int getImage() {
-		return ImageManager.IMAGE_WALL;
-	}
-
-	@Override
-	public boolean stopsLaser() {
-		return true;
-	}
-
-	@Override
-	public Integer getDrawWeight() {
-		return 90;
-	}
-
-}
+<Level id="2_1"
+	width="15"
+	height="9" >
+	
+	<Player x="2" y="4" />
+	<Components>
+		<Wall x="12" y="4" />
+		<Laser x="5" y="1" Direction="Down" />
+		<Goal x="11" y="7" />
+	</Components>
+</Level>

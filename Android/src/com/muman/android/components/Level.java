@@ -20,6 +20,10 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.components;
 
+import java.util.Iterator;
+import java.util.TreeSet;
+import java.util.Vector;
+
 import com.muman.android.utils.Coordinate;
 
 /**
@@ -42,20 +46,79 @@ public class Level {
 	 */
 	public Player player;
 	/**
-	 * A matrix of components for this level
+	 * A matrix of ArrayLists of components for this level
 	 */
-	public Component[][] components;
+	private Vector<Vector<TreeSet<Component>>> components = null;
+	
+	/**
+	 * Adds a Component to the components matrix at the given location
+	 * @param x Distance from the left side of the screen (0 - getWidth()-1)
+	 * @param y Distance from the top of the screen (0 - getHeight()-1)
+	 * @param c Coordinate to add
+	 * @return True if the component was added successfully
+	 */
+	public boolean addComponent(int x, int y, Component c) {
+		if (components == null) {
+			return false;
+		}
+		if (x < 0 | x >= mTileWidth | y < 0 | y >= mTileHeight) {
+			return false;
+		}
+
+		return components.get(x).get(y).add(c);
+	}
+	
+	/**
+	 * Get the list of components at a given location
+	 * @param x Width-component of the coordinate
+	 * @param y Height-component of the coordinate
+	 * @return An array of Components
+	 */
+	public Component[] getComponents(int x, int y) {
+		if (components == null) {
+			return null;
+		}
+		
+		return components.get(x).get(y).toArray(new Component[0]);
+	}
+	
+	/**
+	 * Removes a Component from the components matrix
+	 * @param x Width-component of the coordinate
+	 * @param y Height-component of the coordinate
+	 * @param c Component to remove
+	 * @return True if the component was removed
+	 */
+	public boolean removeComponent(int x, int y, Component c) {
+		return components.get(x).get(y).remove(c);
+	}
 	
 	/**
 	 * State of a Level
 	 */
 	public static enum State {
-		RUNNING, WIN, LOSE
+		RUNNING, WIN, LOSE, ERROR
 	}
+	
 	/**
-	 * The current state of the level
+	 * For now, this just returns the state of the player. More options may be added later.
+	 * @return
 	 */
-	public State mState;
+	public State getState() {
+		if (player == null)
+			return State.ERROR;
+		
+		switch (player.getState()) {
+		case WON:
+			return State.WIN;
+		case LOST:
+			return State.LOSE;
+		case PLAYING:
+			return State.RUNNING;
+		default:
+			return State.ERROR;
+		}
+	}
 
 	/**
 	 * Default Constructor
@@ -64,8 +127,6 @@ public class Level {
 	public Level(String levelId) {
 		id = levelId;
 		mMoves = 0;
-		components = new Component[maxTileWidth][maxTileHeight];
-		mState = State.RUNNING;
 	}
 	
 	
@@ -108,7 +169,17 @@ public class Level {
 		}
 		mTileWidth = width;
 		mTileHeight = height;
-		components = new Component[width][height];
+		components = new Vector<Vector<TreeSet<Component>>>(width);
+		
+		// TODO: Is there a way to do this in the above declaration? 
+		for (int i=0; i<width; i++) {
+			int size = components.size();
+			components.add(i, new Vector<TreeSet<Component>>(height));
+			for(int j=0; j<height; j++) {
+				size = components.get(i).size();
+				components.get(i).add(j, new TreeSet<Component>());
+			}
+		}
 	}
 	
 	
@@ -119,7 +190,7 @@ public class Level {
 	 */
 	public void update() {
 		
-		if (mState != State.RUNNING) {
+		if (getState() != State.RUNNING) {
 			return;
 		}
 		
@@ -147,10 +218,41 @@ public class Level {
 				| next.x < 0 | next.x >= mTileWidth) {
 			playerOutOfBounds();
 		} else {
-			if (components[next.x][next.y] == null) {
+			if (components.get(next.x).get(next.y).size() == 0) {
 				player.move();
 			} else {
-				components[next.x][next.y].onCollision(player);
+				Iterator<Component> it = components.get(next.x).get(next.y).iterator();
+				while (it.hasNext()) {
+					Component c = it.next();
+					if (c.onCollision(player)) {
+						break;
+					}
+					
+					switch (player.movement){
+					case UP:
+						next.y--;
+						break;
+					case DOWN:
+						next.y++;
+						break;
+					case RIGHT:
+						next.x++;
+						break;
+					case LEFT:
+						next.x--;
+						break;
+					case NONE:
+					default:
+						return;
+					}
+					if (next.y < 0 | next.y >= mTileHeight
+							| next.x < 0 | next.x >= mTileWidth) {
+						playerOutOfBounds();
+						break;
+					} else {
+						player.move();
+					}
+				}
 			}
 		}
 	}
@@ -199,24 +301,7 @@ public class Level {
 	 * Called when a player hits a boundary
 	 */
 	private void playerOutOfBounds() {
-		player.stop();
-		mState = State.LOSE;
-	}
-	
-	/**
-	 * Called when a player reaches the Goal
-	 */
-	public void win() {
-		player.stop();
-		mState = State.WIN;
-	}
-	
-	/**
-	 * Called when a player loses, for any reason
-	 */
-	public void lose() {
-		player.stop();
-		mState = State.LOSE;
+		player.die();
 	}
 
 }
