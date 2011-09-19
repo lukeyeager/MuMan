@@ -20,6 +20,7 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.components;
 
+import com.muman.android.utils.Coordinate.Direction;
 import com.muman.android.utils.ImageManager;
 
 /**
@@ -30,13 +31,15 @@ import com.muman.android.utils.ImageManager;
 public class LaserSource extends Component {
 
 	/**
-	 * An Enum for storing the direction in which this laser extends
-	 * @author Luke
-	 *
+	 * An identifier for this LaserSource, so that a LaserSwitch can find it
 	 */
-	public static enum Direction {
-		UP, DOWN, RIGHT, LEFT
-	}
+	private Integer mID = 0;
+	
+	/**
+	 * Getter for mID
+	 * @return
+	 */
+	public int getID() { return mID; }
 	
 	/**
 	 * The direction of this laser
@@ -56,6 +59,17 @@ public class LaserSource extends Component {
 	public LaserSource(Direction direction) {
 		mDirection = direction;
 	}
+	
+	/**
+	 * Constructor to create a LaserSource with a valid ID
+	 * @param direction
+	 * @param id
+	 */
+	public LaserSource(Direction direction, int id) {
+		this(direction);
+		
+		mID = id;
+	}
 
 	@Override
 	public boolean onCollision(Player player) {
@@ -65,7 +79,18 @@ public class LaserSource extends Component {
 
 	@Override
 	public int getImage() {
-		return ImageManager.IMAGE_LASER_SOURCE;
+		switch (mDirection) {
+		case UP:
+			return ImageManager.IMAGE_LASER_SOURCE_UP;
+		case DOWN:
+			return ImageManager.IMAGE_LASER_SOURCE_DOWN;
+		case RIGHT:
+			return ImageManager.IMAGE_LASER_SOURCE_RIGHT;
+		case LEFT:
+			return ImageManager.IMAGE_LASER_SOURCE_LEFT;
+		default:
+			return 0;
+		}
 	}
 
 	@Override

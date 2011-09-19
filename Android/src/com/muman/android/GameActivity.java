@@ -70,18 +70,26 @@ public class GameActivity extends Activity {
 			Bundle extras = getIntent().getExtras();
 			levelPath = (extras != null) ? extras.getString(LEVEL) : null;
 		}
+		boolean startGame = true;
 		if (levelPath == null) {
+			startGame = false;
+		} else {
+			mGameView = (GameView) findViewById(R.id.gameview);
+			if (!mGameView.loadChildren(this))
+				startGame = false;
+			else if (!mGameView.loadLevel(levelPath))
+				startGame = false;
+		}
+		
+		if (!startGame) {
 			setResult(-1);
 			finish();
 		} else {
-			mGameView = (GameView) findViewById(R.id.gameview);
-			mGameView.loadChildren(this);
-			mGameView.loadLevel(levelPath);
+			// Start music
+			mediaPlayer = MediaPlayer.create(this, R.raw.music_game);
+			mediaPlayer.start();
+			mediaPlayer.setLooping(true);
 		}
-		
-		mediaPlayer = MediaPlayer.create(this, R.raw.music_game);
-		mediaPlayer.start();
-		mediaPlayer.setLooping(true);
 	}
 	
     @Override

@@ -20,7 +20,7 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.components;
 
-import com.muman.android.components.LaserSource.Direction;
+import com.muman.android.utils.Coordinate.Direction;
 import com.muman.android.utils.ImageManager;
 
 /**
@@ -57,8 +57,16 @@ public class LaserBeam extends Component {
 
 	@Override
 	public int getImage() {
-		//TODO: return different images depending on direction
-		return ImageManager.IMAGE_LASER_BEAM;
+		switch (mDirection) {
+		case UP:
+		case DOWN:
+			return ImageManager.IMAGE_LASER_BEAM_VERT;
+		case RIGHT:
+		case LEFT:
+			return ImageManager.IMAGE_LASER_BEAM_HORIZ;
+		default:
+			return 0;
+		}
 	}
 
 	@Override

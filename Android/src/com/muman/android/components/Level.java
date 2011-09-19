@@ -20,11 +20,13 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 
 package com.muman.android.components;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.TreeSet;
 import java.util.Vector;
 
 import com.muman.android.utils.Coordinate;
+import com.muman.android.utils.Coordinate.Direction;
 
 /**
  * Represents a game level, holding a Player and a matrix of Components
@@ -45,6 +47,45 @@ public class Level {
 	 * The Player for this level
 	 */
 	public Player player;
+	
+	/**
+	 * State of a Level
+	 */
+	public static enum State {
+		RUNNING, WIN, LOSE, ERROR
+	}
+	
+	/**
+	 * For now, this just returns the state of the player. More options may be added later.
+	 * @return
+	 */
+	public State getState() {
+		if (player == null | components == null)
+			return State.ERROR;
+		
+		switch (player.getState()) {
+		case WON:
+			return State.WIN;
+		case LOST:
+			return State.LOSE;
+		case PLAYING:
+			return State.RUNNING;
+		default:
+			return State.ERROR;
+		}
+	}
+
+	/**
+	 * Default Constructor
+	 * @param levelId Which level has been loaded.
+	 */
+	public Level(String levelId) {
+		id = levelId;
+		mMoves = 0;
+	}
+	
+	// === COMPONENTS ===
+	
 	/**
 	 * A matrix of ArrayLists of components for this level
 	 */
@@ -64,6 +105,9 @@ public class Level {
 		if (x < 0 | x >= mTileWidth | y < 0 | y >= mTileHeight) {
 			return false;
 		}
+		
+		if (c.getClass() == LaserSource.class)
+			addLaser(((LaserSource) c).getID(), x, y);
 
 		return components.get(x).get(y).add(c);
 	}
@@ -90,43 +134,10 @@ public class Level {
 	 * @return True if the component was removed
 	 */
 	public boolean removeComponent(int x, int y, Component c) {
-		return components.get(x).get(y).remove(c);
-	}
-	
-	/**
-	 * State of a Level
-	 */
-	public static enum State {
-		RUNNING, WIN, LOSE, ERROR
-	}
-	
-	/**
-	 * For now, this just returns the state of the player. More options may be added later.
-	 * @return
-	 */
-	public State getState() {
-		if (player == null)
-			return State.ERROR;
+		if (c.getClass() == LaserSource.class)
+			removeLaser(((LaserSource) c).getID());
 		
-		switch (player.getState()) {
-		case WON:
-			return State.WIN;
-		case LOST:
-			return State.LOSE;
-		case PLAYING:
-			return State.RUNNING;
-		default:
-			return State.ERROR;
-		}
-	}
-
-	/**
-	 * Default Constructor
-	 * @param levelId Which level to load.
-	 */
-	public Level(String levelId) {
-		id = levelId;
-		mMoves = 0;
+		return components.get(x).get(y).remove(c);
 	}
 	
 	
@@ -139,7 +150,7 @@ public class Level {
 	/**
 	 * The width of the current level
 	 */
-	private Integer mTileWidth;
+	private Integer mTileWidth = 0;
 	/**
 	 * Getter for mTileWidth
 	 * @return
@@ -152,7 +163,7 @@ public class Level {
 	/**
 	 * The height of the current level
 	 */
-	private Integer mTileHeight;
+	private Integer mTileHeight = 0;
 	/**
 	 * Getter for mTileHeight
 	 */
@@ -161,27 +172,90 @@ public class Level {
 	 * Setter for mTileWidth and mTileHeight
 	 * @param width
 	 * @param height
+	 * @return True on success
 	 */
-	public void setDimensions(int width, int height) {
+	public boolean setDimensions(int width, int height) {
 		if (width > maxTileWidth | width < 1 
 				| height > maxTileHeight | height < 1) {
-			throw new RuntimeException("Invalid dimensions");
+			return false;
 		}
 		mTileWidth = width;
 		mTileHeight = height;
 		components = new Vector<Vector<TreeSet<Component>>>(width);
 		
-		// TODO: Is there a way to do this in the above declaration? 
 		for (int i=0; i<width; i++) {
-			int size = components.size();
 			components.add(i, new Vector<TreeSet<Component>>(height));
 			for(int j=0; j<height; j++) {
-				size = components.get(i).size();
 				components.get(i).add(j, new TreeSet<Component>());
+			}
+		}
+		return true;
+	}
+	
+	// === LASERS ===
+	
+	/**
+	 * A list of Laser ID's for active Lasers
+	 */
+	private ArrayList<Integer> laserIDs;
+	/**
+	 * A list of Laser Coordinates for active Lasers
+	 */
+	private ArrayList<Coordinate> laserCoords;
+	
+	/**
+	 * Adds a Laser by ID and coordinate to the lists laserIDs and laserCoords
+	 * @param id
+	 * @param x
+	 * @param y
+	 */
+	private void addLaser(int id, int x, int y) {
+		if (laserIDs == null)
+			laserIDs = new ArrayList<Integer>();
+		if (laserCoords == null)
+			laserCoords = new ArrayList<Coordinate>();
+		
+		// A Laser with ID=0 does not have a switch, so we don't need to keep track of it
+		if (id == 0)
+			return;
+		
+		for (int i=0; i<laserIDs.size(); i++) {
+			if (laserIDs.get(i) == id)
+				throw new RuntimeException("Two Lasers with the same ID have been declared");
+		}
+		laserIDs.add(id);
+		laserCoords.add(new Coordinate(x,y));
+	}
+	
+	/**
+	 * Removes a Laser by id from the internal lists
+	 * @param id
+	 */
+	private void removeLaser(int id) {
+		if (laserIDs == null | laserCoords == null)
+			return;
+		
+		for (int i=0; i<laserIDs.size(); i++) {
+			if (laserIDs.get(i) == id) {
+				laserIDs.remove(i);
+				laserCoords.remove(i);
+				return;
 			}
 		}
 	}
 	
+	public Coordinate findLaserById(int id) {
+		if (laserIDs == null | laserCoords == null)
+			return null;
+		
+		for (int i=0; i<laserIDs.size(); i++) {
+			if (laserIDs.get(i) == id) {
+				return laserCoords.get(i);
+			}
+		}
+		
+		return null;
+	}
 	
 	// === GAMEPLAY ===
 	
@@ -197,23 +271,12 @@ public class Level {
 		// The next position for Player
 		Coordinate next = new Coordinate(player.getX(), player.getY());
 		
-		switch (player.movement){
-		case UP:
-			next.y--;
-			break;
-		case DOWN:
-			next.y++;
-			break;
-		case RIGHT:
-			next.x++;
-			break;
-		case LEFT:
-			next.x--;
-			break;
-		case NONE:
-		default:
+		if (player.getDir() == Direction.NONE)
 			return;
-		}
+		
+		next.dir = player.getDir();
+		next.move();
+		
 		if (next.y < 0 | next.y >= mTileHeight
 				| next.x < 0 | next.x >= mTileWidth) {
 			playerOutOfBounds();
@@ -228,23 +291,8 @@ public class Level {
 						break;
 					}
 					
-					switch (player.movement){
-					case UP:
-						next.y--;
-						break;
-					case DOWN:
-						next.y++;
-						break;
-					case RIGHT:
-						next.x++;
-						break;
-					case LEFT:
-						next.x--;
-						break;
-					case NONE:
-					default:
-						return;
-					}
+					next.move();
+					
 					if (next.y < 0 | next.y >= mTileHeight
 							| next.x < 0 | next.x >= mTileWidth) {
 						playerOutOfBounds();
@@ -261,9 +309,9 @@ public class Level {
 	 * Handles UP input to level
 	 */
 	public void onInputUp() {
-		if (player.movement == Player.Movement.NONE) {
+		if (player.getDir() == Direction.NONE) {
 			mMoves++;
-			player.movement = Player.Movement.UP;
+			player.setDir(Direction.UP);
 		}
 	}
 
@@ -271,9 +319,9 @@ public class Level {
 	 * Handles DOWN input to level
 	 */
 	public void onInputDown() {
-		if (player.movement == Player.Movement.NONE) {
+		if (player.getDir() == Direction.NONE) {
 			mMoves++;
-			player.movement = Player.Movement.DOWN;
+			player.setDir(Direction.DOWN);
 		}
 	}
 
@@ -281,9 +329,9 @@ public class Level {
 	 * Handles LEFT input to level
 	 */
 	public void onInputLeft() {
-		if (player.movement == Player.Movement.NONE) {
+		if (player.getDir() == Direction.NONE) {
 			mMoves++;
-			player.movement = Player.Movement.LEFT;
+			player.setDir(Direction.LEFT);
 		}
 	}
 
@@ -291,9 +339,9 @@ public class Level {
 	 * Handles RIGHT input to level
 	 */
 	public void onInputRight() {
-		if (player.movement == Player.Movement.NONE) {
+		if (player.getDir() == Direction.NONE) {
 			mMoves++;
-			player.movement = Player.Movement.RIGHT;
+			player.setDir(Direction.RIGHT);
 		}
 	}
 	

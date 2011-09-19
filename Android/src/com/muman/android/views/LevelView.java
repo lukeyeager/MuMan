@@ -37,7 +37,6 @@ import android.widget.Toast;
 import com.muman.android.R;
 import com.muman.android.components.Component;
 import com.muman.android.components.Level;
-import com.muman.android.utils.GameException;
 import com.muman.android.utils.ImageManager;
 import com.muman.android.utils.LevelXmlParser;
 
@@ -75,16 +74,24 @@ public class LevelView extends View {
 	public LevelView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 	
+		mState = State.INIT;
+		
 		mTileSize = context.getResources().getInteger(R.integer.tile_size);
 		mBorderSize = context.getResources().getInteger(R.integer.border_width);
-		mImageManager = new ImageManager(context);
+		
+		try {
+			mImageManager = new ImageManager(context);
+		} catch (Exception e) {
+			handleError(e);
+		}
     }
 	
 	/**
 	 * Loads a level from an XML file
 	 * @param levelPath The path to an XML file under assets/Levels
+	 * @return True on success
 	 */
-	public void loadLevel(String levelPath) {
+	public boolean loadLevel(String levelPath) {
 		try {
 			mLevel = new Level(levelPath);
 			LevelXmlParser handler = new LevelXmlParser(mLevel);
@@ -101,9 +108,11 @@ public class LevelView extends View {
 			update();
 			
 		} catch (Exception e) {
-			e.printStackTrace();
-			Toast.makeText(getContext(), "An error occurred during LevelView.loadLevel: " + e.getMessage(), Toast.LENGTH_LONG).show();
+			handleError(e);
+			return false;
 		}
+		
+		return true;
 	}
 
 	/**
@@ -160,8 +169,12 @@ public class LevelView extends View {
 
 	/**
 	 * Invoked by GameView when a touch event occurs. 
+	 * @param action A MotionEvent constant
+	 * @param eventX
+	 * @param eventY
+	 * @return True if the event was recognized.
 	 */
-	public boolean processTouchEvent(int action, float eventX, float eventY) throws GameException {
+	public boolean processTouchEvent(int action, float eventX, float eventY) {
 
 		switch (action) {
 		case MotionEvent.ACTION_DOWN:
@@ -174,7 +187,8 @@ public class LevelView extends View {
 
 		case MotionEvent.ACTION_UP:
 			if (beginMotionX == 0 | beginMotionY == 0) {
-				throw new GameException("Touch up found when no touch down registered!");
+				// Touch up found when no touch down registered
+				return false;
 			}
 			float diffX = eventX - beginMotionX;
 			float diffY = eventY - beginMotionY;
@@ -197,11 +211,22 @@ public class LevelView extends View {
 				}
 				update();
 			}
+			return true;
 
 		default:
-			//debug("Ignored touch event: " + action + " at (" + eventX + ',' + eventY + ')');
 			return false;
 		}
+	}
+	
+	/**
+	 * Internal function to handle exceptions.
+	 * @param e
+	 */
+	private void handleError(Exception e) {
+		e.printStackTrace();
+		Toast.makeText(getContext(), "An error occurred: " + e.getClass().getName() + "\n"
+				+ e.getMessage(), Toast.LENGTH_LONG).show();
+		mState = State.ERROR;
 	}
 	
 	//==================================
@@ -228,7 +253,7 @@ public class LevelView extends View {
 	protected void onDraw(Canvas canvas) {
 		super.onDraw(canvas);
 		
-		if (!isInEditMode() && mLevel != null) {
+		if (!isInEditMode() && mLevel != null && mState != State.ERROR && mLevel.getState() != Level.State.ERROR) {
 			// Draw components
 			for (int x = 0; x < mLevel.getWidth(); x += 1) {
 				for (int y = 0; y < mLevel.getHeight(); y += 1) {

@@ -21,6 +21,7 @@ along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
 package com.muman.android.components;
 
 import com.muman.android.utils.Coordinate;
+import com.muman.android.utils.Coordinate.Direction;
 
 /**
  * Main character, one per level.
@@ -32,34 +33,37 @@ public class Player {
 	/**
 	 * Player location
 	 */
-	private Coordinate position;
+	private Coordinate location;
 	/**
-	 * Getter for the X-position
+	 * Getter for the X-location
 	 * @return
 	 */
 	public int getX() {
-		return position.x;
+		return location.x;
 	}
 	/**
-	 * Getter for the Y-position
+	 * Getter for the Y-location
 	 * @return
 	 */
 	public int getY() {
-		return position.y;
+		return location.y;
 	}
-
+	
 	/**
-	 * Enum to hold the different states of Player movement
-	 * @author Luke
-	 *
+	 * Getter for the player's movement
+	 * @return
 	 */
-	public static enum Movement {
-		NONE, UP, DOWN, RIGHT, LEFT
+	public Direction getDir() {
+		return location.dir;
 	}
+	
 	/**
-	 * The current player Movement
+	 * Setter for the player's movement
+	 * @param direction
 	 */
-	public Movement movement;
+	public void setDir(Direction direction) {
+		location.dir = direction;
+	}
 	
 	/**
 	 * Enum to denote the state of the Player.
@@ -82,41 +86,25 @@ public class Player {
 	
 	/**
 	 * Default constructor
-	 * @param newX Starting position
-	 * @param newY Starting position
+	 * @param newX Starting location
+	 * @param newY Starting location
 	 */ 
 	public Player(int newX, int newY) {
-		position = new Coordinate(newX, newY);
-		movement = Movement.NONE;
+		location = new Coordinate(newX, newY, Direction.NONE);
 	}
 	
 	/**
 	 * Updates a Player's location according to its movement
 	 */
 	public void move() {
-		switch (movement) {
-		case UP:
-			position.y--;
-			break;
-		case DOWN:
-			position.y++;
-			break;
-		case RIGHT:
-			position.x++;
-			break;
-		case LEFT:
-			position.x--;
-			break;
-		default:
-			break;
-		}
+		location.move();
 	}
 	
 	/**
 	 * Stops movement
 	 */
 	public void stop() {
-		movement = Movement.NONE;
+		location.dir = Direction.NONE;
 	}
 	
 	/**

@@ -1,4 +1,5 @@
-/*
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
 Copyright 2011 Luke Yeager and Sam Bryan
 $Id$
 
@@ -16,43 +17,22 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with MuMan.  If not, see <http://www.gnu.org/licenses/gpl-3.0.html>.
-*/
+-->
 
-package com.muman.android.components;
-
-/**
- * This component turns off a laser beam when encountered.
- * @author Luke
- *
- */
-public class LaserKey extends Component {
+<Level id="2_3"
+	width="15"
+	height="9" >
 	
-	private LaserSource source;
-	
-	public LaserKey(LaserSource src) {
-		source = src;
-	}
-
-	@Override
-	public boolean onCollision(Player player) {
-		source.turnOff();
-		return false;
-	}
-
-	@Override
-	public int getImage() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean stopsLaser() {
-		return false;
-	}
-
-	@Override
-	public Integer getDrawWeight() {
-		return 60;
-	}
-
-}
+	<Player x="2" y="3" />
+	<Components>
+		<Wall x="2" y="9" />
+		<Wall x="8" y="3" />
+		<Wall x="9" y="8" />
+		<Wall x="15" y="4" />
+		<Laser x="5" y="1" Direction="Down" Id="1" />
+		<LaserSwitch x="2" y="5" Id="1" />
+		<Laser x="11" y="9" Direction="Up" Id="2" />
+		<LaserSwitch x="8" y="5" Id="2" />
+		<Goal x="14" y="8" />
+	</Components>
+</Level>

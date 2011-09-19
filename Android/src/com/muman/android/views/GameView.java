@@ -119,6 +119,9 @@ public class GameView extends FrameLayout {
 			mState = State.PAUSED;
 			createDialog(GameActivity.DIALOG_LOSE);
 			break;
+		case ERROR:
+			mActivity.finish();
+			break;
 		default:
 			break;
 		}
@@ -145,7 +148,7 @@ public class GameView extends FrameLayout {
 			mActivity = activity;
 			
 			mLevelView = (LevelView) findViewById(R.id.levelview);
-			if (mLevelView == null)
+			if (mLevelView == null | mLevelView.mState != LevelView.State.INIT)
 				return false;
 			
 			mStatusBarLevel = (TextView) findViewById(R.id.statusbar_level);
@@ -164,11 +167,15 @@ public class GameView extends FrameLayout {
 	/**
 	 * Forces mLevelView to load a new level
 	 * @param levelPath
+	 * @return True on success
 	 */
-	public void loadLevel(String levelPath) {
-		mLevelView.loadLevel(levelPath);
+	public boolean loadLevel(String levelPath) {
+		if (!mLevelView.loadLevel(levelPath))
+			return false;
+		
 		mState = State.RUNNING;
 		mRedrawHandler.sleep(0);
+		return true;
 	}
 	
 	/**

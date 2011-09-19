@@ -25,18 +25,36 @@ package com.muman.android.utils;
  * @author Luke
  *
  */
-public class Coordinate {
+public class Coordinate implements Cloneable {
+	
+	public static enum Direction {
+		NONE, UP, DOWN, LEFT, RIGHT
+	}
+	
 	public int x;
 	public int y;
+	
+	public Direction dir;
 
 	/**
-	 * Constructor
+	 * Default constructor
 	 * @param newX
 	 * @param newY
 	 */
 	public Coordinate(int newX, int newY) {
+		this(newX, newY, Direction.NONE);
+	}
+
+	/**
+	 * Constructor, with specified direction
+	 * @param newX
+	 * @param newY
+	 * @param direction
+	 */
+	public Coordinate(int newX, int newY, Direction direction) {
 		x = newX;
 		y = newY;
+		dir = direction;
 	}
 
 	/**
@@ -50,4 +68,45 @@ public class Coordinate {
 		}
 		return false;
 	}
+	
+	/**
+	 * Moves a Coordinate according to it's current direction
+	 */
+	public void move() {
+		move(dir);
+	}
+	
+	/**
+	 * Moves a Coordinate in a certain direction
+	 * @param direction
+	 */
+	public void move(Direction direction) {
+		switch (direction) {
+		case UP:
+			y--;
+			break;
+		case DOWN:
+			y++;
+			break;
+		case LEFT:
+			x--;
+			break;
+		case RIGHT:
+			x++;
+			break;
+		default:
+			break;
+		}
+	}
+
+	@Override
+	protected Coordinate clone() {
+		try {
+			return (Coordinate) super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Couldn't clone a coordinate");
+		}
+	}
+	
 }

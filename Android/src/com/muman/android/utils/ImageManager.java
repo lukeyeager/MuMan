@@ -42,8 +42,13 @@ public class ImageManager {
     public static final int IMAGE_WALL = 2;
     public static final int IMAGE_GOAL = 3;
     public static final int IMAGE_SPIKER = 4;
-    public static final int IMAGE_LASER_SOURCE = 5;
-    public static final int IMAGE_LASER_BEAM = 6;
+    public static final int IMAGE_LASER_SOURCE_UP = 5;
+    public static final int IMAGE_LASER_SOURCE_DOWN = 6;
+    public static final int IMAGE_LASER_SOURCE_LEFT = 7;
+    public static final int IMAGE_LASER_SOURCE_RIGHT = 8;
+    public static final int IMAGE_LASER_BEAM_HORIZ = 9;
+    public static final int IMAGE_LASER_BEAM_VERT = 10;
+    public static final int IMAGE_LASER_KEY = 11;
     
     private Bitmap[] mImages;
     
@@ -54,8 +59,9 @@ public class ImageManager {
 	 * Default Constructor
 	 * @param context
 	 * @param tileSize The size in pixels of each square tile
+	 * @throws IOException 
 	 */
-    public ImageManager(Context context) {
+    public ImageManager(Context context) throws IOException {
     	mAssets = context.getAssets();
     	screenSize = context.getResources().getString(R.string.screen_size);
     	
@@ -65,8 +71,13 @@ public class ImageManager {
     	loadImage(IMAGE_WALL, "wall");
     	loadImage(IMAGE_GOAL, "goal");
     	loadImage(IMAGE_SPIKER, "spiker");
-    	loadImage(IMAGE_LASER_SOURCE, "laser_source");
-    	loadImage(IMAGE_LASER_BEAM, "laser_beam");
+    	loadImage(IMAGE_LASER_SOURCE_UP, "laser_source_up");
+    	loadImage(IMAGE_LASER_SOURCE_DOWN, "laser_source_down");
+    	loadImage(IMAGE_LASER_SOURCE_LEFT, "laser_source_left");
+    	loadImage(IMAGE_LASER_SOURCE_RIGHT, "laser_source_right");
+    	loadImage(IMAGE_LASER_BEAM_HORIZ, "laser_beam_horiz");
+    	loadImage(IMAGE_LASER_BEAM_VERT, "laser_beam_vert");
+    	loadImage(IMAGE_LASER_KEY, "laser_key");
     	
     	mAssets = null;
     }
@@ -77,19 +88,20 @@ public class ImageManager {
 	 * 
 	 * @param key
 	 * @param tile
+	 * @throws IOException 
 	 */
-	private void loadImage(int key, String fileName) {
+	private void loadImage(int key, String fileName) throws IOException {
 		String filePath = "Images/" + screenSize + "/" + fileName + ".png";
 		
 		BufferedInputStream buf;
-		try {
-			buf = new BufferedInputStream(mAssets.open(filePath));
-			Bitmap bitmap = BitmapFactory.decodeStream(buf);
-			mImages[key] = bitmap;
-			buf.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		buf = new BufferedInputStream(mAssets.open(filePath));
+		Bitmap bitmap = BitmapFactory.decodeStream(buf);
+		
+		if (key < 0 || key > mImages.length - 1) {
+			throw new RuntimeException("ImageManager.mImages is too small");
 		}
+		mImages[key] = bitmap;
+		buf.close();
 	}
     
     /**

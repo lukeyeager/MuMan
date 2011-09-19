@@ -52,7 +52,7 @@ public abstract class Component implements Comparable<Component> {
 	 * Wall			90	<br>
 	 * Spiker		80	<br>
 	 * Goal			61	<br>
-	 * LaserKey		60	<br>
+	 * LaserSwitch		60	<br>
 	 * Player		50	<br>
 	 * LaserBeam	31	<br>
 	 * LaserSource	30	<br>

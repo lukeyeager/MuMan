@@ -29,11 +29,13 @@ import org.xml.sax.helpers.DefaultHandler;
 import com.muman.android.components.Component;
 import com.muman.android.components.Goal;
 import com.muman.android.components.LaserBeam;
+import com.muman.android.components.LaserSwitch;
 import com.muman.android.components.LaserSource;
 import com.muman.android.components.Level;
 import com.muman.android.components.Player;
 import com.muman.android.components.Spiker;
 import com.muman.android.components.Wall;
+import com.muman.android.utils.Coordinate.Direction;
 
 public class LevelXmlParser extends DefaultHandler {
 
@@ -60,6 +62,11 @@ public class LevelXmlParser extends DefaultHandler {
 	 * 		original LaserSource to include LaserBeams which extend until a solid surface is encountered.
 	 */
 	private ArrayList<Coordinate> lasers;
+	/**
+	 * A list of laserSwitchIDs which have been created. At the end of parsing, these must be checked to make
+	 * 		sure there is a Laser which matches this one's ID
+	 */
+	private ArrayList<Integer> laserSwitchIDs;
 	
 	/**
 	 * Default constructor
@@ -69,6 +76,7 @@ public class LevelXmlParser extends DefaultHandler {
 		super();
 		level = mLevel;
 		lasers = new ArrayList<Coordinate>();
+		laserSwitchIDs = new ArrayList<Integer>();
 	}
 
 	@Override
@@ -88,6 +96,8 @@ public class LevelXmlParser extends DefaultHandler {
 			parseGoal(attributes);
 		} else if (localName.equals("Spiker")) {
 			parseSpiker(attributes);
+		} else if (localName.equals("LaserSwitch")) {
+			parseLaserSwitch(attributes);
 		} else if (localName.equals("Laser")) {
 			parseLaser(attributes);
 		}
@@ -116,7 +126,6 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 	}
 
-	// XXX: This never gets executed?
 	@Override
 	public void endDocument() throws SAXException {
 
@@ -127,6 +136,7 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 
 		extendLasers();
+		verifyLaserSwitches();
 	}	
 
 	/**
@@ -153,10 +163,11 @@ public class LevelXmlParser extends DefaultHandler {
 
 		if (width == null | height == null) {
 			throw new SAXException("Error parsing <Level>");
-		} else {
-			parsingLevel = true;
-			level.setDimensions(width, height);
 		}
+		if (!level.setDimensions(width, height)) {
+			throw new SAXException("Failed to set the level dimensions");
+		}
+		parsingLevel = true;
 
 	}
 
@@ -247,32 +258,68 @@ public class LevelXmlParser extends DefaultHandler {
 		}
 
 		Coordinate c = parseAttrsForPosition(attrs);
+		Direction dir = null;
+		Integer id = null;
 		
-		LaserSource.Direction dir = null;
 		int length = attrs.getLength();
 		for (int i = 0; i < length; i++) {
 			String name = attrs.getLocalName(i);
 			String value = attrs.getValue(i);
 			if (name.equals("Direction")) {
 				if (value.equalsIgnoreCase("UP")) {
-					dir = LaserSource.Direction.UP;
+					dir = Direction.UP;
 				} else if (value.equalsIgnoreCase("DOWN")) {
-					dir = LaserSource.Direction.DOWN;
+					dir = Direction.DOWN;
 				}  else if (value.equalsIgnoreCase("LEFT")) {
-					dir = LaserSource.Direction.LEFT;
+					dir = Direction.LEFT;
 				}  else if (value.equalsIgnoreCase("RIGHT")) {
-					dir = LaserSource.Direction.RIGHT;
+					dir = Direction.RIGHT;
 				}
-				break;
+			} else if (name.equals("Id")) {
+				id = Integer.parseInt(value);
 			}
 		}
 		
 		if (dir == null) {
 			throw new SAXException("You must specify a 'Direction' for a Laser (Up/Down/Left/Right)");
 		}
-
-		level.addComponent(c.x, c.y, new LaserSource(dir));
+		
+		if (id == null)
+			level.addComponent(c.x, c.y, new LaserSource(dir));
+		else 
+			level.addComponent(c.x, c.y, new LaserSource(dir, id));
 		lasers.add(c);
+	}
+	
+	/**
+	 * Parse a LaserSwitch component
+	 * 
+	 * @param attrs
+	 * @throws SAXException
+	 */
+	private void parseLaserSwitch(Attributes attrs) throws SAXException {
+		if (!parsingComponents) {
+			throw new SAXException("<LaserSwitch> node must be within <Components>");
+		}
+
+		Coordinate c = parseAttrsForPosition(attrs);
+		Integer id = null;
+		
+		int length = attrs.getLength();
+		for (int i = 0; i < length; i++) {
+			String name = attrs.getLocalName(i);
+			String value = attrs.getValue(i);
+			if (name.equals("Id")) {
+				id = Integer.parseInt(value);
+			}
+		}
+		
+		if (id == null) {
+			throw new SAXException("You must specify an 'Id' for a LaserSwitch");
+		}
+
+		level.addComponent(c.x, c.y, new LaserSwitch(id, level));
+		laserSwitchIDs.add(id);
 	}
 
 	/**
@@ -312,36 +359,19 @@ public class LevelXmlParser extends DefaultHandler {
 		// Create Lasers
 		int numLasers = lasers.size();
 		for(int i=0; i<numLasers; i++) {
-			Coordinate c = lasers.get(i);
+			Coordinate c = lasers.get(i).clone();
 			Component[] array = level.getComponents(c.x, c.y);
 			
 			// We'll just take the first one we encounter
 			//	XXX: This means you can't put two laser sources in the same location for now
-			LaserSource.Direction dir = null;
 			for (int j=0; j<array.length; j++) {
 				if (array[j].getClass() == LaserSource.class) {
-					dir = ((LaserSource) array[j]).getDirection();
+					c.dir = ((LaserSource) array[j]).getDirection();
 					break;
 				}
 			}
 			
-			// Update c
-			switch (dir) {
-			case UP:
-				c.y--;
-				break;
-			case DOWN:
-				c.y++;
-				break;
-			case LEFT:
-				c.x--;
-				break;
-			case RIGHT:
-				c.x++;
-				break;
-			default:
-				throw new SAXException("Somehow the LaserSource orientation got thrown off during parsing");
-			}
+			c.move();
 			
 			while (c.x >= 0 && c.x < level.getWidth() && c.y >= 0 && c.y < level.getHeight()) {
 				
@@ -356,25 +386,34 @@ public class LevelXmlParser extends DefaultHandler {
 				if (!drawHere)
 					break;
 				
-				level.addComponent(c.x, c.y, new LaserBeam(dir)); 
-				
-				// Update c
-				switch (dir) {
-				case UP:
-					c.y--;
-					break;
-				case DOWN:
-					c.y++;
-					break;
-				case LEFT:
-					c.x--;
-					break;
-				case RIGHT:
-					c.x++;
-					break;
-				default:
-				}
+				level.addComponent(c.x, c.y, new LaserBeam(c.dir)); 
+				c.move();
 			}
+		}
+	}
+
+	/**
+	 * Called after XML file has been parsed, this function verifies that all declared LaserSwitch's
+	 * 		have a matching Laser with the same ID
+	 * @throws SAXException
+	 */
+	private void verifyLaserSwitches() throws SAXException {
+		for (int i=0; i<laserSwitchIDs.size(); i++) {
+			int id = laserSwitchIDs.get(i);
+			boolean matched = false;
+			for (int j=0; j<lasers.size(); j++) {
+				Component[] array = level.getComponents(lasers.get(j).x, lasers.get(j).y);
+				for (int k=0; k<array.length; k++) {
+					if (array[k].getClass() == LaserSource.class && ((LaserSource) array[k]).getID() == id) {
+						matched = true;
+						break;
+					}
+				}
+				if (matched)
+					break;
+			}
+			if (!matched)
+				throw new SAXException("Unable to match LaserSwitch #" + id + " to a Laser");
 		}
 	}
 
